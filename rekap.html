@@ -3,617 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Rekap Perizinan</title>
+    <title>Rekap Absensi Per Kamar</title>
     <style>
-        /* ==================== RESET & BASE LAYOUT ==================== */
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .app-container { display: flex; min-height: 100vh; background-color: #f0f2f5; }
+        
+        /* SIDEBAR navigasi */
+        .sidebar { width: 250px; background-color: #2c3e50; color: #ecf0f1; padding-top: 20px; position: fixed; height: 100vh; font-family: 'Segoe UI', Arial, sans-serif; z-index: 100; }
+        .sidebar h2 { text-align: center; color: #ffffff; margin-bottom: 30px; font-size: 20px; letter-spacing: 1px; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { display: block; color: #bdc3c7; padding: 15px 25px; text-decoration: none; font-size: 16px; transition: all 0.3s ease; }
+        .sidebar ul li a:hover { color: #ffffff; background-color: #34495e; padding-left: 35px; }
+        .sidebar ul li a.active { background-color: #1abc9c; color: #ffffff; font-weight: bold; border-left: 5px solid #16a085; }
 
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-            background-color: #f0f2f5;
-        }
+        /* MAIN CONTENT LAYOUT */
+        .main-content { flex: 1; margin-left: 250px; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif; }
+        .rekap-container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        
+        h1 { text-align: center; color: #1abc9c; margin-bottom: 5px; font-size: 24px; }
+        .subtitle { text-align: center; color: #64748b; margin-bottom: 25px; font-size: 14px; font-weight: 500; }
 
-        /* ==================== STYLE NAVIGATOR (SIDEBAR) ==================== */
-        .sidebar {
-            width: 250px;
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            padding-top: 20px;
-            position: fixed;
-            height: 100vh;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            z-index: 100;
-        }
+        /* Control Panel */
+        .control-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 15px; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; gap: 15px; flex-wrap: wrap; }
+        .date-picker-box { display: flex; align-items: center; gap: 10px; font-weight: bold; color: #334155; }
+        .input-date { padding: 8px 12px; border: 2px solid #cbd5e1; border-radius: 6px; font-weight: bold; outline: none; color: #1e293b; font-family: inherit; }
+        .input-date:focus { border-color: #1abc9c; }
 
-        .sidebar h2 {
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 30px;
-            font-size: 20px;
-            letter-spacing: 1px;
-        }
+        /* Stat Badges */
+        .stat-badges { display: flex; gap: 10px; font-size: 12px; font-weight: bold; }
+        .badge-info { padding: 6px 12px; border-radius: 20px; text-transform: uppercase; }
+        .bg-hadir { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .bg-absen { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .bg-izin { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
 
-        .sidebar ul {
-            list-style: none;
-        }
+        /* Accordion List */
+        .kamar-accordion-container { display: flex; flex-direction: column; gap: 12px; }
+        .kamar-block { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff; }
+        
+        .kamar-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #f8fafc; cursor: pointer; transition: background-color 0.2s; user-select: none; }
+        .kamar-header:hover { background-color: #f1f5f9; }
+        .kamar-title { font-size: 16px; font-weight: 700; color: #1e293b; }
+        
+        .header-stats { display: flex; align-items: center; gap: 15px; }
+        .mini-badge { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: bold; }
+        .arrow-icon { font-size: 12px; color: #64748b; transition: transform 0.2s; }
+        .kamar-block.active .arrow-icon { transform: rotate(180deg); }
 
-        .sidebar ul li a {
-            display: block;
-            color: #bdc3c7;
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+        .kamar-content { display: none; padding: 20px; border-top: 1px solid #e2e8f0; background-color: #ffffff; }
 
-        .sidebar ul li a:hover {
-            color: #ffffff;
-            background-color: #34495e;
-            padding-left: 35px;
-        }
-
-        .sidebar ul li a.active {
-            background-color: #f59e0b;
-            color: white;
-            font-weight: bold;
-        }
-
-        /* ==================== AREA KONTEN UTAMA (KANAN) ==================== */
-        .main-content {
-            margin-left: 250px; 
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 40px 20px;
-        }
-
-        /* ==================== STYLE TONE TABEL REKAP ==================== */
-        body { font-family: 'Segoe UI', Arial, sans-serif; }
-        .rekap-box { background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 850px; }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; font-size: 24px; }
-        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-size: 14px; }
-
-        /* === FILTER KAMAR PANEL === */
-        .filter-panel { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .btn-filter { background-color: #e2e8f0; color: #475569; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
-        .btn-filter:hover { background-color: #cbd5e1; }
-        .btn-filter.active { background-color: #f59e0b; color: white; }
-
-        /* === STRUKTUR TABEL ACCORDION === */
-        .table-container { border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        /* Table Style Inside Accordion */
         .list-table { width: 100%; border-collapse: collapse; }
-        .list-table th, .list-table td { padding: 14px 18px; text-align: left; font-size: 14px; }
-        .list-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
-        
-        .row-master { cursor: pointer; background-color: #ffffff; transition: background 0.2s; border-bottom: 1px solid #e2e8f0; user-select: none; }
-        .row-master:hover { background-color: #f8fafc; }
-        .row-master.active { background-color: #fffbeb; }
-        
-        .counter-badge { background-color: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 12px; border: 1px solid #fde68a; }
-        .arrow-icon { color: #94a3b8; font-size: 12px; transition: transform 0.2s; display: inline-block; }
-        .row-master.active .arrow-icon { transform: rotate(180deg); color: #d97706; }
-
-        /* === SUB-TABEL DETAIL DROPDOWN === */
-        .row-detail { display: none; background-color: #fafafa; border-bottom: 1px solid #e2e8f0; }
-        .tanggal-list { list-style: none; padding: 5px 10px; }
-        .tanggal-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; gap: 15px; }
-        .tanggal-item:last-child { border-bottom: none; }
-        
-        .text-alasan { display: block; color: #475569; font-size: 13px; margin-top: 4px; font-style: italic; }
-        .text-pengurus { display: block; color: #64748b; font-size: 12px; margin-top: 2px; font-weight: 500; }
-        .text-rentang-tanggal { font-size: 12px; color: #94a3b8; font-weight: normal; margin-left: 8px; }
-        
-        /* === BADGE STATUS PERIZINAN === */
-        .badge-izin { background-color: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; border: 1px solid #bbf7d0; }
-        .badge-belum { background-color: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; border: 1px solid #bae6fd; }
-        .text-sisa-waktu { display: block; color: #b45309; font-size: 12px; font-weight: 600; margin-top: 4px; }
-        .text-belum-mulai { display: block; color: #0369a1; font-size: 12px; font-weight: 600; margin-top: 4px; }
-
-        /* BADGE KONDISI MEDIS SAKIT */
-        .badge-sakit { background-color: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-top: 3px; display: inline-block; border: 1px solid #fecaca; }
-        .badge-sehat { background-color: #f0fdf4; color: #166534; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-top: 3px; display: inline-block; border: 1px solid #bbf7d0; }
-
-        /* BUTTONS */
-        .btn-hapus-item { background-color: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: background 0.2s; }
-        .btn-hapus-item:hover { background-color: #b91c1c; }
-        .btn-edit-item { background-color: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: background 0.2s; }
-        .btn-edit-item:hover { background-color: #d97706; }
-        .btn-edit-nama { background-color: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: background 0.2s; }
-        .btn-edit-nama:hover { background-color: #2563eb; }
-        
-        .btn-status-sakit { background-color: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .btn-status-sakit:hover { background-color: #dc2626; }
-        .btn-status-sehat { background-color: #10b981; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .btn-status-sehat:hover { background-color: #059669; }
-
-        /* === MODAL STYLES === */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .modal-header { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #2c3e50; }
-        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-weight: bold; color: #475569; font-size: 13px; }
-        .form-control { padding: 8px 12px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
-        .form-control:focus { border-color: #f59e0b; }
-        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-        .btn-cancel { background: #e2e8f0; color: #475569; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        .btn-save { background: #3b82f6; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .list-table th, .list-table td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 14px; }
+        .list-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; }
+        .badge-status { padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        
-        <nav class="sidebar">
-            <h2>Menu Utama</h2>
+        <div class="sidebar">
+            <h2>ASRAMA BESMA</h2>
             <ul>
-                <li><a href="index.html">Input Absensi</a></li>
-                <li><a href="list.html">Daftar Santri</a></li>
-                <li><a href="izin1.html">Perizinan</a></li>
-                <li><a href="izin2.html">Rekap Sakit</a></li>
-                <li><a href="daftar.html">Alpha</a></li>
-                <li><a href="rekap.html">Rekap Kamar</a></li> 
-                <li><a href="history.html">Riwayat</a></li>
+                <li><a href="index.html">📝 Form Absensi</a></li>
+                <li><a href="list.html">🚪 Daftar Santri</a></li>
+                <li><a href="daftar.html">📋 Rekap Absen</a></li>
+                <li><a href="rekap.html" class="active">📊 Rekap Per Kamar</a></li>
+                <li><a href="izin1.html">📝 Daftar Perizinan</a></li>
+                <li><a href="history.html">📜 Riwayat Perizinan</a></li>
+                <li><a href="izin2.html">🏥 Riwayat Sakit</a></li>
             </ul>
-        </nav>
+        </div>
 
         <main class="main-content">
-            <div class="rekap-box">
-                <h1>📝 Daftar Santri Keluar / Izin</h1>
-                <p class="subtitle">Data sinkronisasi realtime santri yang sedang berada di luar asrama</p>
+            <div class="rekap-container">
+                <h1>📊 Rekap Presensi Per Kamar</h1>
+                <p class="subtitle">Peninjauan status komparatif seluruh kamar secara terpadu real-time</p>
 
-                <div class="filter-panel">
-                    <button class="btn-filter active" onclick="gantiFilterKamar('Semua', this)">Semua</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A1', this)">A1</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A2', this)">A2</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A3', this)">A3</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A4', this)">A4</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A5', this)">A5</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A6', this)">A6</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A7', this)">A7</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A8', this)">A8</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A9', this)">A9</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A10', this)">A10</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A11', this)">A11</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A12', this)">A12</button>
-                    <button class="btn-filter" onclick="gantiFilterKamar('A13', this)">A13</button>
+                <div class="control-panel">
+                    <div class="date-picker-box">
+                        <label for="filterTanggalRekap">📅 Pilih Tanggal:</label>
+                        <input type="date" id="filterTanggalRekap" class="input-date" onchange="handlePerubahanTanggal()">
+                    </div>
+                    <div class="stat-badges">
+                        <div class="badge-info bg-hadir" id="grandTotalHadir">Hadir: 0</div>
+                        <div class="badge-info bg-absen" id="grandTotalAbsen">Absen: 0</div>
+                        <div class="badge-info bg-izin" id="grandTotalIzin">Izin: 0</div>
+                    </div>
                 </div>
 
-                <div class="table-container">
-                    <table class="list-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 15%;">Kamar</th>
-                                <th style="width: 55%;">Nama Santri <span id="currentKamarView" style="font-weight: normal; color: #94a3b8;">(Semua Kamar)</span></th>
-                                <th style="width: 20%;">Frekuensi</th>
-                                <th style="width: 10%; text-align: right;">Detail</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelBody">
-                            </tbody>
-                    </table>
+                <div class="kamar-accordion-container" id="rekapKamarListContainer">
+                    <div style="text-align: center; color: #94a3b8; padding: 40px; background: white; border-radius: 12px;">
+                        ⏳ Sedang sinkronisasi data rekap dari cloud database...
+                    </div>
                 </div>
             </div>
         </main>
-    </div>
-
-    <div class="modal" id="modalEditNama">
-        <div class="modal-content">
-            <div class="modal-header">✏️ Edit Identitas Izin</div>
-            <input type="hidden" id="editKeyWaktuMulai">
-            <div class="form-group">
-                <label for="modalInputNama">Nama Santri:</label>
-                <input type="text" id="modalInputNama" class="form-control" style="text-transform: uppercase;" required>
-            </div>
-            <div class="form-group">
-                <label for="modalInputKamar">Kamar:</label>
-                <select id="modalInputKamar" class="form-control" required>
-                    <option value="A1">A1</option><option value="A2">A2</option><option value="A3">A3</option>
-                    <option value="A4">A4</option><option value="A5">A5</option><option value="A6">A6</option>
-                    <option value="A7">A7</option><option value="A8">A8</option><option value="A9">A9</option>
-                    <option value="A10">A10</option><option value="A11">A11</option><option value="A12">A12</option>
-                    <option value="A13">A13</option>
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="tutupFormModal()">Batal</button>
-                <button class="btn-save" onclick="eksekusiSimpanPerubahan()">Simpan</button>
-            </div>
-        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // 1. KONFIGURASI FIREBASE CLOUD (Sesuai dengan database utama sistem asrama Anda)
+        // 1. KONFIGURASI DATABASE CLOUD FIREBASE
         const firebaseConfig = {
-            apiKey: "RAHASIA_API_KEY_KAMU",
-            authDomain: "proyek-kamu.firebaseapp.com",
-            databaseURL: "https://proyek-kamu-default-rtdb.firebaseio.com",
-            projectId: "proyek-kamu",
-            storageBucket: "proyek-kamu.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef"
+            apiKey: "AIzaSyDIxABuKyV-Yz6QkjTBEoj-tZUlqZFLt1s",
+            authDomain: "absensi-besma.firebaseapp.com",
+            databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "absensi-besma",
+            storageBucket: "absensi-besma.firebasestorage.app",
+            messagingSenderId: "903515270638",
+            appId: "1:903515270638:web:bda8fb36985ca7e366da6e"
         };
 
-        // Inisialisasi Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
-        // State Global Aplikasi
-        let filterSekarang = 'Semua';
-        let globalDataIzinAsrama = [];
-        let statusDropdownTerbuka = {}; // Menyimpan state dropdown agar tidak tertutup otomatis saat data realtime di-update
+        // Variabel Cache Sinkronisasi Data Cloud
+        let dataSantriMaster = [];
+        let dataAbsensiAsrama = [];
+        let dataIzinAsrama = [];
 
-        // 2. REALTIME SINKRONISASI LISTENER DARI NODE CLOUD FIREBASE
-        function listenDataIzinFirebase() {
+        // Penampung State Accordion Terbuka/Tertutup agar tidak ter-reset ketika database update
+        let statusAccordionTerbuka = {};
+
+        // 2. AMBIL DATA REALTIME DARI FIREBASE SINKRONISASI
+        function listenFirebaseData() {
+            // Ambil Data Master Santri
+            db.ref('dataSantriMaster').on('value', (snapshot) => {
+                const val = snapshot.val();
+                dataSantriMaster = val ? Object.values(val) : [];
+                prosesDanTampilkanRekap();
+            });
+
+            // Ambil Log Riwayat Absensi (Absen/Alpha)
+            db.ref('dataAbsensiAsrama').on('value', (snapshot) => {
+                const val = snapshot.val();
+                if (val) {
+                    dataAbsensiAsrama = Array.isArray(val) ? val.filter(i => i !== null) : Object.values(val);
+                } else {
+                    dataAbsensiAsrama = [];
+                }
+                prosesDanTampilkanRekap();
+            });
+
+            // Ambil Log Riwayat Perizinan Aktif (Menggantikan statusIzinSantriAktif)
             db.ref('dataIzinAsrama').on('value', (snapshot) => {
                 const val = snapshot.val();
                 if (val) {
-                    // Pastikan dikonversi menjadi format array murni
-                    globalDataIzinAsrama = Array.isArray(val) ? val : Object.values(val);
+                    dataIzinAsrama = Array.isArray(val) ? val.filter(i => i !== null) : Object.values(val);
                 } else {
-                    globalDataIzinAsrama = [];
+                    dataIzinAsrama = [];
                 }
-                
-                // Jalankan sinkronisasi pembersihan otomatis & render tabel
-                bersihkanDataExpiredLokal();
-                tampilkanData();
-                sinkronisasiStatusIzinAktifKeHalamanLain();
+                prosesDanTampilkanRekap();
             });
         }
 
-        // 3. FUNGSI RENDER UTAMA DAFTAR PERIZINAN KE DOM HTML
-        function tampilkanData() {
-            const tabelBody = document.getElementById('tabelBody');
-            const currentKamarView = document.getElementById('currentKamarView');
+        // 3. SETTING PERIODE TANGGAL DEFAULT
+        function inisialisasiTanggal() {
+            const inputTanggal = document.getElementById('filterTanggalRekap');
+            const tanggalTersimpan = localStorage.getItem('tanggalAbsenTerakhir');
             
-            currentKamarView.textContent = ` (${filterSekarang === 'Semua' ? 'Semua Kamar' : 'Kamar ' + filterSekarang})`;
-            tabelBody.innerHTML = '';
-            
-            // Filter Data Berdasarkan Pilihan Kamar Panel
-            const dataDifilter = filterSekarang === 'Semua' ? globalDataIzinAsrama : globalDataIzinAsrama.filter(item => {
-                const kmrItem = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-                return kmrItem === filterSekarang;
-            });
-
-            if (dataDifilter.length === 0) {
-                tabelBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:20px; font-style:italic;">Tidak ada anak yang sedang izin aktif saat ini.</td></tr>`;
-                return;
-            }
-
-            // Kelompokkan data izin berdasarkan Nama & Kamar (Data Kompresi Accordion)
-            const dataTerkompresi = {};
-            dataDifilter.forEach(item => {
-                const kmrItem = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-                const namaKey = item.nama.trim().toUpperCase();
-                const key = `${namaKey}_${kmrItem}`;
-
-                if (!dataTerkompresi[key]) {
-                    dataTerkompresi[key] = {
-                        nama: namaKey,
-                        kamar: kmrItem,
-                        total: 0,
-                        riwayat: []
-                    };
-                }
-                dataTerkompresi[key].total += 1;
-                dataTerkompresi[key].riwayat.push(item);
-            });
-
-            let indexId = 0;
-            Object.values(dataTerkompresi).forEach(user => {
-                indexId++;
-
-                // Hitung rentang waktu paling awal dan paling akhir
-                let tsPalingAwal = Infinity;
-                let tsPalingAkhir = -Infinity;
-                user.riwayat.forEach(r => {
-                    if (r.waktuMulai < tsPalingAwal) tsPalingAwal = r.waktuMulai;
-                    if (r.waktuHabis > tsPalingAkhir) tsPalingAkhir = r.waktuHabis;
-                });
-
-                const stringRentangTanggal = `(${formatTanggalPendek(tsPalingAwal)} - ${formatTanggalPendek(tsPalingAkhir)})`;
-                const idDetailDropdown = `detail_${indexId}`;
-                
-                // Cek status state terbuka sebelumnya
-                const isAktif = statusDropdownTerbuka[idDetailDropdown] ? "active" : "";
-                const displayStyle = statusDropdownTerbuka[idDetailDropdown] ? "table-row" : "none";
-
-                // Susun elemen HTML Baris Utama (Master)
-                const trMaster = document.createElement('tr');
-                trMaster.className = `row-master ${isAktif}`;
-                trMaster.id = `master_${indexId}`;
-                trMaster.setAttribute('onclick', `if(event.target.tagName !== 'BUTTON') toggleDropdown('${idDetailDropdown}', this)`);
-                trMaster.innerHTML = `
-                    <td><span style="font-weight:700; color:#d97706;">${user.kamar}</span></td>
-                    <td>
-                        <strong style="color:#1e293b;">${user.nama}</strong>
-                        <span class="text-rentang-tanggal">${stringRentangTanggal}</span>
-                    </td>
-                    <td><span class="counter-badge">${user.total} Izin Aktif</span></td>
-                    <td style="text-align: right;"><span class="arrow-icon">▼</span></td>
-                `;
-
-                // Susun sub-elemen isi detail perizinan
-                const trDetail = document.createElement('tr');
-                trDetail.id = idDetailDropdown;
-                trDetail.className = 'row-detail';
-                trDetail.style.display = displayStyle;
-                
-                let htmlListTanggal = '<ul class="tanggal-list">';
-                user.riwayat.forEach(r => {
-                    const waktuSekarang = new Date().getTime();
-                    let textWaktuHTML = "";
-                    let badgeStatusHTML = "";
-
-                    const opsiWaktu = { hour: '2-digit', minute: '2-digit' };
-                    const jamMulaiFormat = new Date(r.waktuMulai).toLocaleTimeString('id-ID', opsiWaktu);
-                    const tglMulaiFormat = new Date(r.waktuMulai).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
-
-                    if (waktuSekarang < r.waktuMulai) {
-                        textWaktuHTML = `<span class="text-belum-mulai">⏳ Dijadwalkan Mulai: ${tglMulaiFormat} pukul ${jamMulaiFormat}</span>`;
-                        badgeStatusHTML = `<span class="badge-belum">Belum Mulai</span>`;
-                    } else {
-                        const sisaMilidetik = r.waktuHabis - waktuSekarang;
-                        const sisaHari = Math.floor(sisaMilidetik / (1000 * 60 * 60 * 24));
-                        const sisaJam = Math.floor((sisaMilidetik % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        const sisaMenit = Math.floor((sisaMilidetik % (1000 * 60 * 60)) / (1000 * 60));
-
-                        let teksFormatSisa = "";
-                        if (sisaHari > 0) teksFormatSisa += `${sisaHari} Hari `;
-                        if (sisaJam > 0 || sisaHari > 0) teksFormatSisa += `${sisaJam} Jam `;
-                        teksFormatSisa += `${sisaMenit} Menit`;
-
-                        textWaktuHTML = `<span class="text-sisa-waktu">⚠️ Sisa Waktu Izin: ${teksFormatSisa} lagi</span>`;
-                        badgeStatusHTML = `<span class="badge-izin">Izin Berjalan</span>`;
-                    }
-
-                    const namaPengurus = r.pengurus ? r.pengurus.toUpperCase() : "TIDAK TERCATAT";
-                    const statusSakitBadge = r.isSakit ? `<span class="badge-sakit">Kondisi: Sakit</span>` : `<span class="badge-sehat">Kondisi: Sehat</span>`;
-                    
-                    // Tombol set riwayat sakit / sehat medis
-                    const tombolSakitHTML = r.isSakit ? 
-                        `<button class="btn-status-sehat" onclick="ubahStatusSakit('${r.waktuMulai}', false)">Set Sehat</button>` : 
-                        `<button class="btn-status-sakit" onclick="ubahStatusSakit('${r.waktuMulai}', true)">Set Sakit</button>`;
-
-                    htmlListTanggal += `
-                        <li class="tanggal-item">
-                            <div>
-                                <span style="font-weight:600; color:#334155;">📅 Jadwal Mulai: ${tglMulaiFormat} (${jamMulaiFormat}) | Durasi Total: <strong>${r.durasiTeks || '-'}</strong></span>
-                                <span class="text-alasan">📝 Alasan: "${r.keterangan}"</span>
-                                <span class="text-pengurus">👤 Pengurus Izin: ${namaPengurus}</span>
-                                ${statusSakitBadge}
-                                ${textWaktuHTML}
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                ${badgeStatusHTML}
-                                ${tombolSakitHTML}
-                                <button class="btn-edit-nama" onclick="bukaFormModal('${r.waktuMulai}', '${user.nama}', '${user.kamar}')">✏️ Edit</button>
-                                <button class="btn-edit-item" onclick="ubahDurasiIzin('${r.waktuMulai}', '${r.nama}')">Durasi</button>
-                                <button class="btn-hapus-item" onclick="hapusIzinManual('${r.waktuMulai}', '${r.nama}')">Selesai</button>
-                            </div>
-                        </li>`;
-                });
-                htmlListTanggal += '</ul>';
-                trDetail.innerHTML = `<td colspan="4" style="padding: 0;">${htmlListTanggal}</td>`;
-
-                tabelBody.appendChild(trMaster);
-                tabelBody.appendChild(trDetail);
-            });
-        }
-
-        // 4. KONTROL INTERAKSI FILTER KAMAR
-        function gantiFilterKamar(kamar, btnElement) {
-            filterSekarang = kamar;
-            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-            tampilkanData();
-        }
-
-        // 5. KONTROL ACCORDION DROPDOWN (Buka / Tutup)
-        function toggleDropdown(idDetail, masterElement) {
-            const detailRow = document.getElementById(idDetail);
-            if (detailRow.style.display === "table-row") {
-                detailRow.style.display = "none";
-                masterElement.classList.remove("active");
-                statusDropdownTerbuka[idDetail] = false;
+            if (tanggalTersimpan) {
+                inputTanggal.value = tanggalTersimpan;
             } else {
-                detailRow.style.display = "table-row";
-                masterElement.classList.add("active");
-                statusDropdownTerbuka[idDetail] = true;
+                const sekarang = new Date();
+                const offset = sekarang.getTimezoneOffset();
+                const tanggalLokal = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+                inputTanggal.value = tanggalLokal;
+                localStorage.setItem('tanggalAbsenTerakhir', tanggalLokal);
             }
         }
 
-        // 6. FUNGSI TOMBOL SELESAI / HAPUS PERIZINAN (Kirim ke Node History & Hapus dari Izin Aktif)
-        function hapusIzinManual(waktuMulai, nama) {
-            if (confirm(`Apakah santri bernama "${nama.toUpperCase()}" sudah kembali ke asrama dan ingin menyelesaikan izin ini?`)) {
-                const itemDihapus = globalDataIzinAsrama.find(item => String(item.waktuMulai) === String(waktuMulai));
+        function handlePerubahanTanggal() {
+            const tanggalBaru = document.getElementById('filterTanggalRekap').value;
+            localStorage.setItem('tanggalAbsenTerakhir', tanggalBaru);
+            prosesDanTampilkanRekap();
+        }
+
+        // 4. PEMERIKSAAN STATUS IZIN SINKRONISASI BERDASARKAN RENTANG TANGGAL
+        function cekApakahSantriIzin(namaSantri, kamarSantri, tanggalAbsenDipilih) {
+            if (dataIzinAsrama.length === 0) return false;
+            
+            const namaClean = namaSantri.trim().toUpperCase();
+            const kamarClean = kamarSantri.trim().toUpperCase().replace("KAMAR", "").trim();
+
+            // Cari apakah ada data izin santri yang rentang tanggalnya melingkupi tanggalAbsenDipilih
+            return dataIzinAsrama.some(item => {
+                if (!item) return false;
+                const itemNama = (item.nama || "").trim().toUpperCase();
+                const itemKamar = (item.kamar || "").trim().toUpperCase().replace("KAMAR", "").trim();
                 
-                if (itemDihapus) {
-                    // Pindahkan arsip data ke riwayatIzinAsrama cloud
-                    itemDihapus.waktuSelesaiAsli = new Date().getTime();
-                    itemDihapus.statusKembali = "Kembali Lebih Cepat (Manual)";
-                    itemDihapus.statusColor = "#2563eb"; 
-                    pindahKeHistoryCloud(itemDihapus);
+                // Pencocokan Identitas Nama dan Kamar
+                if (itemNama === namaClean && (itemKamar === kamarClean || itemKamar === `A${kamarClean}`)) {
+                    let tglMulai = item.waktuMulai ? item.waktuMulai.split('T')[0] : "";
+                    let tglSelesai = item.waktuSelesai ? item.waktuSelesai.split('T')[0] : "";
+                    
+                    // Validasi kecocokan rentang hari
+                    if (tglMulai && tglSelesai) {
+                        return (tanggalAbsenDipilih >= tglMulai && tanggalAbsenDipilih <= tglSelesai);
+                    }
                 }
-
-                // Saring data baru diluar item tersebut dan push ke Firebase
-                const dataTerupdate = globalDataIzinAsrama.filter(item => String(item.waktuMulai) !== String(waktuMulai));
-                db.ref('dataIzinAsrama').set(dataTerupdate);
-            }
-        }
-
-        // 7. ARSIPKAN DATA PERIZINAN KE NODE RIWAYAT CLOUD FIREBASE
-        function pindahKeHistoryCloud(item) {
-            db.ref('riwayatIzinAsrama').once('value', (snapshot) => {
-                let riwayatList = snapshot.val() || [];
-                riwayatList = Array.isArray(riwayatList) ? riwayatList : Object.values(riwayatList);
-                
-                riwayatList.push(item);
-                db.ref('riwayatIzinAsrama').set(riwayatList);
+                return false;
             });
         }
 
-        // 8. MANAJEMEN STATUS KONDISI MEDIS SAKIT (Koneksi ke izin2.html otomatis)
-        function ubahStatusSakit(waktuMulai, statusSakitBaru) {
-            const index = globalDataIzinAsrama.findIndex(item => String(item.waktuMulai) === String(waktuMulai));
-            if (index !== -1) {
-                globalDataIzinAsrama[index].isSakit = statusSakitBaru;
+        // 5. INTI LOGIKA PEMROSESAN DAN STRUKTURISASI DATA REKAP
+        function prosesDanTampilkanRekap() {
+            const tanggalTerpilih = document.getElementById('filterTanggalRekap').value;
+            const kontenDiv = document.getElementById('rekapKamarListContainer');
+
+            if (!kontenDiv) return;
+
+            // Susun 13 Kamar Utama (A1 s/d A13)
+            const rekapKamarData = {};
+            for (let i = 1; i <= 13; i++) {
+                rekapKamarData[`A${i}`] = {
+                    namaKamar: `A${i}`,
+                    countHadir: 0,
+                    countAbsen: 0,
+                    countIzin: 0,
+                    santriList: []
+                };
+            }
+
+            // Variabel Penampung Akumulasi Total Seluruh Kamar
+            let grandHadir = 0, grandAbsen = 0, grandIzin = 0;
+
+            // Mapping Status Kamar Santri
+            dataSantriMaster.forEach(santri => {
+                if (!santri.kamar) return;
                 
-                // Jika diset Sakit, arsipkan ke riwayatSakitAsrama cloud
-                if (statusSakitBaru) {
-                    const logSakit = {
-                        waktuMulai: globalDataIzinAsrama[index].waktuMulai,
-                        nama: globalDataIzinAsrama[index].nama.toUpperCase(),
-                        kamar: globalDataIzinAsrama[index].kamar.toUpperCase(),
-                        keterangan: globalDataIzinAsrama[index].keterangan,
-                        tanggalInput: new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})
-                    };
-                    
-                    db.ref('riwayatSakitAsrama').once('value', (snapshot) => {
-                        let listSakit = snapshot.val() || [];
-                        listSakit = Array.isArray(listSakit) ? listSakit : Object.values(listSakit);
+                const kClean = santri.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                const keyKamar = kClean.startsWith('A') ? kClean : `A${kClean}`;
+
+                // Jika terdeteksi di luar jangkauan A1 - A13, bypass
+                if (!rekapKamarData[keyKamar]) return;
+
+                const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+
+                // A. Cek Status Izin Terlebih Dahulu
+                const hasilCekIzin = cekApakahSantriIzin(santri.nama, keyKamar, tanggalTerpilih);
+                
+                let statusFinal = "Hadir";
+                if (hasilCekIzin) {
+                    statusFinal = "Izin";
+                } else {
+                    // B. Jika tidak Izin, Cek log Alpha di dataAbsensiAsrama
+                    const adaDiLogAbsen = dataAbsensiAsrama.some(item => {
+                        if (!item) return false;
+                        let tglItem = item.tanggal || "";
+                        if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
                         
-                        // Validasi duplikasi pencegahan redundansi data
-                        const sudahAda = listSakit.some(item => String(item.waktuMulai) === String(logSakit.waktuMulai));
-                        if (!sudahAda) {
-                            listSakit.push(logSakit);
-                            db.ref('riwayatSakitAsrama').set(listSakit);
-                        }
+                        const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                        const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                        
+                        return nLog === namaSantriClean && 
+                               (kLog === kClean || `A${kLog}` === keyKamar) && 
+                               tglItem === tanggalTerpilih && 
+                               (item.status === "Absen" || item.status === "Alpha");
+                    });
+
+                    if (adaDiLogAbsen) {
+                        statusFinal = "Absen";
+                    }
+                }
+
+                // Kalkulasi Stat Per Kamar & Global
+                if (statusFinal === "Hadir") { rekapKamarData[keyKamar].countHadir++; grandHadir++; }
+                if (statusFinal === "Absen") { rekapKamarData[keyKamar].countAbsen++; grandAbsen++; }
+                if (statusFinal === "Izin")  { rekapKamarData[keyKamar].countIzin++;  grandIzin++; }
+
+                rekapKamarData[keyKamar].santriList.push({
+                    nama: santri.nama.trim().toUpperCase(),
+                    status: statusFinal
+                });
+            });
+
+            // Update Tampilan Total Akumulasi Top Panel
+            document.getElementById('grandTotalHadir').textContent = `Hadir: ${grandHadir}`;
+            document.getElementById('grandTotalAbsen').textContent = `Absen: ${grandAbsen}`;
+            document.getElementById('grandTotalIzin').textContent = `Izin: ${grandIzin}`;
+
+            // 6. RENDER DATA COMPONENT ACCORDION KE DOM HTML
+            let htmlFinal = "";
+
+            Object.values(rekapKamarData).forEach(kamar => {
+                // Urutkan nama santri di dalam kamar secara Alphabetical A-Z
+                kamar.santriList.sort((a, b) => a.nama.localeCompare(b.nama));
+
+                const kId = kamar.namaKamar;
+                const isTerbuka = statusAccordionTerbuka[kId] ? "active" : "";
+                const displayStyle = statusAccordionTerbuka[kId] ? "block" : "none";
+
+                let rowsSantriHTML = "";
+                if (kamar.santriList.length === 0) {
+                    rowsSantriHTML = `<tr><td colspan="3" style="text-align:center; color:#aaa; font-style:italic; padding:20px;">Belum ada data santri di kamar ini.</td></tr>`;
+                } else {
+                    kamar.santriList.forEach((santri, index) => {
+                        let warnaBadge = "background-color: #dcfce7; color: #166534;";
+                        if (santri.status === "Absen") warnaBadge = "background-color: #fee2e2; color: #991b1b;";
+                        if (santri.status === "Izin") warnaBadge = "background-color: #fef3c7; color: #92400e;";
+
+                        rowsSantriHTML += `
+                            <tr>
+                                <td style="text-align: center; color: #64748b; font-weight: 600; width: 50px;">${index + 1}</td>
+                                <td><span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span></td>
+                                <td style="text-align: center; width: 130px;">
+                                    <span class="badge-status" style="${warnaBadge}">${santri.status.toUpperCase()}</span>
+                                </td>
+                            </tr>
+                        `;
                     });
                 }
-                
-                // Update array utama ke cloud Firebase
-                db.ref('dataIzinAsrama').set(globalDataIzinAsrama);
-            }
-        }
 
-        // 9. UBAH DURASI TAMBAHAN WAKTU IZIN
-        function ubahDurasiIzin(waktuMulai, nama) {
-            const jamTambahanStr = prompt(`Masukkan jumlah tambahan waktu izin untuk ${nama.toUpperCase()} (dalam satuan JAM):\nContoh: Ketik "2" untuk menambah 2 jam.`);
-            const jamTambahan = parseFloat(jamTambahanStr);
-            
-            if (isNaN(jamTambahan) || jamTambahan <= 0) {
-                if (jamTambahanStr !== null) alert("Input tidak valid! Harus berupa angka di atas 0.");
-                return;
-            }
-
-            const index = globalDataIzinAsrama.findIndex(item => String(item.waktuMulai) === String(waktuMulai));
-            if (index !== -1) {
-                const milidetikTambahan = jamTambahan * 60 * 60 * 1000;
-                globalDataIzinAsrama[index].waktuHabis = parseFloat(globalDataIzinAsrama[index].waktuHabis) + milidetikTambahan;
-                
-                // Rekonstruksi string tulisan teks durasi baru
-                const durasiLamaJam = parseFloat(globalDataIzinAsrama[index].durasiTeks) || 0;
-                globalDataIzinAsrama[index].durasiTeks = `${durasiLamaJam + jamTambahan} Jam`;
-
-                db.ref('dataIzinAsrama').set(globalDataIzinAsrama).then(() => {
-                    alert(`Berhasil memperpanjang durasi izin ${nama.toUpperCase()} sebanyak ${jamTambahan} Jam!`);
-                });
-            }
-        }
-
-        // 10. MODAL INTERAKSI POPUP EDIT IDENTITAS NAMA / KAMAR
-        function bukaFormModal(waktuMulai, nama, kamar) {
-            document.getElementById('editKeyWaktuMulai').value = waktuMulai;
-            document.getElementById('modalInputNama').value = nama;
-            document.getElementById('modalInputKamar').value = kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            document.getElementById('modalEditNama').classList.add('show');
-        }
-        function tutupFormModal() { document.getElementById('modalEditNama').classList.remove('show'); }
-
-        function eksekusiSimpanPerubahan() {
-            const waktuMulaiKey = document.getElementById('editKeyWaktuMulai').value;
-            const namaBaru = document.getElementById('modalInputNama').value.trim().toUpperCase();
-            const kamarBaru = document.getElementById('modalInputKamar').value;
-
-            if (!namaBaru) { alert("Nama lengkap santri tidak boleh kosong!"); return; }
-
-            const index = globalDataIzinAsrama.findIndex(item => String(item.waktuMulai) === String(waktuMulaiKey));
-            if (index !== -1) {
-                globalDataIzinAsrama[index].nama = namaBaru;
-                globalDataIzinAsrama[index].kamar = kamarBaru;
-
-                db.ref('dataIzinAsrama').set(globalDataIzinAsrama).then(() => {
-                    tutupFormModal();
-                    alert("Identitas perizinan santri berhasil diperbarui di cloud!");
-                });
-            }
-        }
-
-        // 11. AUTOMATIC BACKGROUND CLEANER (Menghapus data izin yang telah kedaluwarsa secara otomatis)
-        function bersihkanDataExpiredLokal() {
-            const waktuSekarang = new Date().getTime();
-            let adaDataDiubah = false;
-
-            const dataBersih = globalDataIzinAsrama.filter(item => {
-                if (waktuSekarang > item.waktuHabis) {
-                    item.waktuSelesaiAsli = item.waktuHabis;
-                    item.statusKembali = "Kembali Otomatis (Waktu Habis)";
-                    item.statusColor = "#10b981";
-                    pindahKeHistoryCloud(item);
-                    adaDataDiubah = true;
-                    return false; // Hapus dari daftar aktif
-                }
-                return true;
+                htmlFinal += `
+                    <div class="kamar-block ${isTerbuka}" id="block_${kId}">
+                        <div class="kamar-header" onclick="toggleDropdownKamar('${kId}')">
+                            <span class="kamar-title">🚪 KAMAR ${kId}</span>
+                            <div class="header-stats">
+                                <span class="mini-badge bg-hadir">${kamar.countHadir} H</span>
+                                <span class="mini-badge bg-absen">${kamar.countAbsen} A</span>
+                                <span class="mini-badge bg-izin">${kamar.countIzin} I</span>
+                                <span class="arrow-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="kamar-content" id="content_${kId}" style="display: ${displayStyle};">
+                            <table class="list-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">No</th>
+                                        <th>Nama Lengkap</th>
+                                        <th style="text-align: center;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rowsSantriHTML}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
             });
 
-            if (adaDataDiubah) {
-                db.ref('dataIzinAsrama').set(dataBersih);
+            kontenDiv.innerHTML = htmlFinal;
+        }
+
+        // 7. FUNGSI KONTROL INTERAKSI ACCORDION DROPDOWN
+        function toggleDropdownKamar(kamarId) {
+            const elemenBlock = document.getElementById(`block_${kamarId}`);
+            const elemenContent = document.getElementById(`content_${kamarId}`);
+
+            if (elemenBlock.classList.contains('active')) {
+                elemenBlock.classList.remove('active');
+                elemenContent.style.display = "none";
+                statusAccordionTerbuka[kamarId] = false; // Catat state tertutup
+            } else {
+                elemenBlock.classList.add('active');
+                elemenContent.style.display = "block";
+                statusAccordionTerbuka[kamarId] = true;  // Catat state terbuka
             }
         }
 
-        // 12. LOGIKA EMBED SINKRONISASI CACHE NODE `statusIzinSantriAktif` UNTUK HALAMAN REKAP.HTML / LIST.HTML
-        function sinkronisasiStatusIzinAktifKeHalamanLain() {
-            const waktuSekarang = new Date().getTime();
-            const payloadStatusIzin = {};
+        // 8. HIGHLIGHT LOGIKA NAVIGASI SIDEBAR DISAMAKAN DENGAN IZIN1.HTML
+        document.querySelectorAll('.sidebar ul li a').forEach(link => link.classList.remove('active'));
+        const namaFileAktif = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.sidebar ul li a').forEach(link => {
+            const hrefTautan = link.getAttribute('href');
+            if (namaFileAktif === hrefTautan || (namaFileAktif === '' && hrefTautan === 'index.html')) {
+                link.classList.add('active');
+            }
+        });
 
-            globalDataIzinAsrama.forEach(item => {
-                // Hanya daftarkan santri yang waktu izinnya sedang berjalan (bukan yang terjadwal nanti)
-                if (waktuSekarang >= item.waktuMulai && waktuSekarang <= item.waktuHabis) {
-                    const kClean = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-                    const nClean = item.nama.trim().toUpperCase();
-                    const keyIzin = `${kClean}_${nClean}`;
-
-                    payloadStatusIzin[keyIzin] = {
-                        nama: nClean,
-                        kamar: kClean,
-                        tanggalMulai: new Date(item.waktuMulai).toISOString().split('T')[0],
-                        tanggalSelesai: new Date(item.waktuHabis).toISOString().split('T')[0],
-                        keterangan: item.keterangan || "Izin Keluar"
-                    };
-                }
-            });
-
-            // Set data sinkronisasi realtime ke node penampung global
-            db.ref('statusIzinSantriAktif').set(payloadStatusIzin);
-        }
-
-        // Helper Format Converter Tanggal Pendek
-        function formatTanggalPendek(timestamp) {
-            const d = new Date(timestamp);
-            return `${d.getDate()}/${d.getMonth() + 1}`;
-        }
-
-        // RUNNING AWAL SINKRONISASI SAAT HALAMAN SELESAI DI LOAD BROWSER
+        // RUNNING AWAL SAAT BROWSER SELESAI LOAD HALAMAN
         window.onload = function() {
-            listenDataIzinFirebase();
-            
-            // Loop checker otomatis setiap 20 detik untuk keakuratan sisa waktu hitung mundur
-            setInterval(() => {
-                bersihkanDataExpiredLokal();
-                tampilkanData();
-            }, 20000);
+            inisialisasiTanggal();
+            listenFirebaseData();
         };
     </script>
 </body>
