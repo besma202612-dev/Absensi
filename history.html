@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Absensi Kamar</title>
+    <title>Riwayat / History Perizinan</title>
     <style>
         /* ==================== RESET & BASE LAYOUT ==================== */
         * { 
@@ -12,6 +12,7 @@
             box-sizing: border-box; 
         }
 
+        /* Pembungkus utama menggunakan Flexbox */
         .app-container {
             display: flex;
             min-height: 100vh;
@@ -70,70 +71,135 @@
             padding: 40px;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
         }
 
-        .form-box {
+        .history-box {
             background-color: #ffffff;
-            padding: 40px;
+            padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 1000px;
         }
 
-        .form-box h1 {
+        .history-box h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 24px;
         }
 
-        .form-group {
+        /* PANEL ATAS & ACTION */
+        .panel-kontrol {
+            display: flex;
+            justify-content: flex-end;
             margin-bottom: 20px;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
+        .btn-hapus-semua {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-hapus-semua:hover {
+            background-color: #b91c1c;
+        }
+
+        /* STYLE TABEL */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .history-table th, .history-table td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .history-table th {
+            background-color: #f8fafc;
             color: #475569;
             font-weight: 600;
             font-size: 14px;
         }
 
-        .form-group select, .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.2s;
+        .history-table tr:hover {
             background-color: #f8fafc;
         }
 
-        .form-group select:focus, .form-group input:focus {
-            border-color: #3b82f6;
-            background-color: #ffffff;
-        }
-
-        /* TOMBOL AKSI */
-        .btn-submit {
-            width: 100%;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 16px;
+        .badge-status-selesai {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 10px;
+            display: inline-block;
+            text-transform: uppercase;
         }
 
-        .btn-submit:hover {
-            background-color: #2563eb;
+        .btn-aksi-hapus {
+            background-color: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #fecdd3;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-aksi-hapus:hover {
+            background-color: #ffe4e6;
+            color: #be123c;
+        }
+
+        /* DROPDOWN KETERANGAN */
+        .btn-dropdown {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-dropdown:hover {
+            color: #1e293b;
+        }
+
+        .btn-dropdown .panah {
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .btn-dropdown.active .panah {
+            transform: rotate(180deg);
+        }
+
+        .row-detail {
+            display: none;
+            background-color: #f8fafc;
+        }
+
+        .box-detail {
+            padding: 15px;
+            border-left: 4px solid #cbd5e1;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -142,7 +208,7 @@
     <div class="app-container">
         <nav class="sidebar">
             <h2>Menu Utama</h2>
-           <ul>
+            <ul>
     <li><a href="index.html">📝 Form Absensi</a></li>
     <li><a href="list.html">🚪 Daftar Santri</a></li>
     <li><a href="daftar.html">📋 Rekap Absen</a></li>
@@ -154,38 +220,15 @@
         </nav>
 
         <main class="main-content">
-            <div class="form-box">
-                <h1>📝 Form Absensi</h1>
+            <div class="history-box">
+                <h1>📋 Riwayat / History Perizinan Santri</h1>
                 
-                <form id="absensiForm" onsubmit="simpanAbsensi(event)">
-                    <div class="form-group">
-                        <label for="kamarSelect">🚪 Pilih Kamar</label>
-                        <select id="kamarSelect" required>
-                            <option value="" disabled selected>-- Pilih Kamar --</option>
-                            <script>
-                                for(let i=1; i<=13; i++) {
-                                    document.write(`<option value="A${i}">Kamar A${i}</option>`);
-                                }
-                            </script>
-                        </select>
-                    </div>
+                <div class="panel-kontrol">
+                    <button class="btn-hapus-semua" onclick="hapusSemuaRiwayat()">🗑️ Hapus Semua Riwayat</button>
+                </div>
 
-                    <div class="form-group">
-                        <label for="namaInput">👤 Nama Lengkap Santri</label>
-                        <input type="text" id="namaInput" placeholder="Masukkan nama santri..." required style="text-transform: uppercase;">
+                <div id="containerTabelHistory">
                     </div>
-
-                    <div class="form-group">
-                        <label for="statusSelect">📊 Status Presensi</label>
-                        <select id="statusSelect" required>
-                            <option value="" disabled selected>-- Pilih Status --</option>
-                            <option value="Absen">Alpha / Tanpa Keterangan</option>
-                            <option value="Izin">Izin / Sakit / Pulang</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn-submit">💾 Kirim Presensi</button>
-                </form>
             </div>
         </main>
     </div>
@@ -194,7 +237,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    // Konfigurasi Firebase Realtime Database Anda
+    // Konfigurasi Firebase Realtime Database
     const firebaseConfig = {
   apiKey: "AIzaSyDIxABuKyV-Yz6QkjTBEoj-tZUlqZFLt1s",
   authDomain: "absensi-besma.firebaseapp.com",
@@ -210,69 +253,126 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Variabel penampung data cloud lokal
-    let globalDataIzinAsrama = [];
-    let globalDataAbsensiAsrama = [];
+    // Penampung data global yang tersinkronisasi dengan Firebase cloud
+    let globalDataHistory = [];
 
-    // Mengambil data secara real-time untuk validasi proteksi izin aktif
-    db.ref('dataIzinAsrama').on('value', (snapshot) => {
-        globalDataIzinAsrama = snapshot.val() || [];
+    // Mengambil data dari Firebase cloud secara real-time
+    db.ref('riwayatIzinAsrama').on('value', (snapshot) => {
+        globalDataHistory = snapshot.val() || [];
+        tampilkanHistory(); // Jalankan render tabel otomatis saat data berubah di cloud
     });
 
-    // Mengambil data secara real-time untuk penambahan log absensi baru
-    db.ref('dataAbsensiAsrama').on('value', (snapshot) => {
-        globalDataAbsensiAsrama = snapshot.val() || [];
-    });
+    // ==================== MAIN CORE FUNCTION DATA ====================
+    function tampilkanHistory() {
+        const container = document.getElementById('containerTabelHistory');
 
-    // ==================== FUNGSI UTAMA PENYIMPANAN FORM ====================
-    function simpanAbsensi(event) {
-        event.preventDefault();
-
-        const kamarInput = document.getElementById('kamarSelect').value;
-        const namaInput = document.getElementById('namaInput').value.trim().toUpperCase();
-        const status = document.getElementById('statusSelect').value;
-
-        // Proteksi pengecekan silang status perizinan yang sedang aktif dari Firebase cloud
-        const sedangIzin = globalDataIzinAsrama.some(item => 
-            item.nama.trim().toUpperCase() === namaInput && item.kamar === kamarInput
-        );
-
-        if (sedangIzin) {
-            alert(`Peringatan: ${namaInput} sedang dalam masa izin aktif.`);
+        if (globalDataHistory.length === 0) {
+            container.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:40px; font-style:italic; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">Belum ada catatan riwayat perizinan yang diarsipkan.</p>`;
             return;
         }
 
-        const hariIni = new Date();
-        const tanggal = `${hariIni.getFullYear()}-${String(hariIni.getMonth() + 1).padStart(2, '0')}-${String(hariIni.getDate()).padStart(2, '0')}`;
+        // Menyalin array data agar pengurutan tidak merusak data asli
+        const historyDiurutkan = [...globalDataHistory].sort((a, b) => Number(b.waktuMulai) - Number(a.waktuMulai));
 
-        if (status === 'Izin') {
-            // Jika memilih Izin, lempar data sementara ke form detail izin via sessionStorage
-            sessionStorage.setItem('tempNama', namaInput);
-            sessionStorage.setItem('tempKamar', kamarInput);
-            sessionStorage.setItem('tempTanggal', tanggal);
-            window.location.href = 'izin.html';
-        } else {
-            // Jika memilih Alpha/Absen, masukkan ke dalam log data absensi global
-            globalDataAbsensiAsrama.push({ 
-                tanggal: tanggal, 
-                kamar: kamarInput, 
-                nama: namaInput, 
-                status: status, 
-                keterangan: '' 
-            });
+        let htmlTabel = `
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">No</th>
+                        <th>Kamar</th>
+                        <th>Nama Santri</th>
+                        <th>Durasi Rencana</th>
+                        <th style="text-align: center;">Status Akhir</th>
+                        <th>Keterangan Lengkap</th>
+                        <th style="width: 100px; text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
 
-            // Set data array terbaru kembali ke Firebase Cloud Node 'dataAbsensiAsrama'
-            db.ref('dataAbsensiAsrama').set(globalDataAbsensiAsrama)
-                .then(() => {
-                    window.location.href = 'daftar.html';
-                })
-                .catch((error) => {
-                    alert("Gagal mengirim data ke cloud: " + error.message);
-                });
+        historyDiurutkan.forEach((item, index) => {
+            const idDropdown = `detail_hist_${index}`;
+            
+            const teksStatusAkhir = item.statusCatatanAkhir ? item.statusCatatanAkhir : "Selesai Sesuai Waktu";
+            const warnaBadgeStatus = item.statusColor ? item.statusColor : "#166534";
+            const warnaLatarStatus = item.statusColor ? item.statusColor + "1a" : "#dcfce7";
+
+            const dMulai = new Date(item.waktuMulai);
+            const dHabis = new Date(item.waktuHabis);
+            const tglSelesaiArsip = item.waktuKembaliKembali ? new Date(item.waktuKembaliKembali) : dHabis;
+
+            const formatWaktuMulai = `${dMulai.getDate()}/${dMulai.getMonth()+1} ${String(dMulai.getHours()).padStart(2,'0')}:${String(dMulai.getMinutes()).padStart(2,'0')}`;
+            const formatWaktuHabis = `${dHabis.getDate()}/${dHabis.getMonth()+1} ${String(dHabis.getHours()).padStart(2,'0')}:${String(dHabis.getMinutes()).padStart(2,'0')}`;
+            const formatWaktuAktifKembali = `${tglSelesaiArsip.getDate()}/${tglSelesaiArsip.getMonth()+1} ${String(tglSelesaiArsip.getHours()).padStart(2,'0')}:${String(tglSelesaiArsip.getMinutes()).padStart(2,'0')}`;
+
+            htmlTabel += `
+                <tr>
+                    <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
+                    <td style="font-weight: 600; color: #334155;">KAMAR ${item.kamar}</td>
+                    <td style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${item.nama}</td>
+                    <td style="font-size: 13px; color: #475569;">${item.durasiTeks}</td>
+                    <td style="text-align: center;">
+                        <span class="badge-status-selesai" style="color: ${warnaBadgeStatus}; background-color: ${warnaLatarStatus}; border: 1px solid ${warnaBadgeStatus}33;">
+                            ${teksStatusAkhir}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-dropdown" onclick="toggleDropdown('${idDropdown}', this)">
+                            📄 Detail Log <span class="panah">▼</span>
+                        </button>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-aksi-hapus" onclick="hapusHistorySatuPerSatu('${item.waktuMulai}', '${item.nama.replace(/'/g, "\\'")}')">
+                            🗑️ Hapus
+                        </button>
+                    </td>
+                </tr>
+                <tr id="${idDropdown}" class="row-detail">
+                    <td colspan="7">
+                        <div class="box-detail">
+                            <strong>🕒 Jadwal Rencana Izin:</strong> ${formatWaktuMulai} s/d ${formatWaktuHabis}<br>
+                            <strong>📥 Waktu Masuk/Arsip Aktual:</strong> ${formatWaktuAktifKembali}<br>
+                            <strong>👤 Pengurus Penanggung Jawab:</strong> ${item.pengurus ? item.pengurus : '-'}<br>
+                            <strong>📝 Alasan/Keterangan Izin:</strong> ${item.keterangan ? item.keterangan : 'Tidak ada catatan khusus.'}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        htmlTabel += `</tbody></table>`;
+        container.innerHTML = htmlTabel;
+    }
+
+    function hapusHistorySatuPerSatu(waktuMulai, nama) {
+        if (confirm(`Hapus catatan riwayat untuk ${nama}? Tindakan ini tidak bisa dibatalkan.`)) {
+            // Memfilter array data global untuk mengecualikan item yang dihapus
+            const dataTerupdate = globalDataHistory.filter(item => !(String(item.waktuMulai) === String(waktuMulai) && item.nama === nama));
+            
+            // Perbarui array data terbaru langsung ke Firebase cloud
+            db.ref('riwayatIzinAsrama').set(dataTerupdate);
         }
     }
 
-    // ==================== SAMAKAN LOGIKA NAVIGASI DARI IZIN1.HTML ====================
+    function toggleDropdown(id, element) {
+        const detailRow = document.getElementById(id);
+        if (detailRow.style.display === "table-row") { 
+            detailRow.style.display = "none"; 
+            element.classList.remove("active"); 
+        } else { 
+            detailRow.style.display = "table-row"; 
+            element.classList.add("active"); 
+        }
+    }
+
+    function hapusSemuaRiwayat() {
+        if (confirm("Apakah Anda yakin ingin MENGHAPUS SEMUA data riwayat secara permanen?")) {
+            // Membersihkan node riwayatIzinAsrama di Firebase cloud
+            db.ref('riwayatIzinAsrama').remove();
+        }
+    }
+
+   // ==================== SAMAKAN LOGIKA NAVIGASI DARI IZIN1.HTML ====================
     document.querySelectorAll('.sidebar ul li a').forEach(link => link.classList.remove('active'));
     const namaFileAktif = window.location.pathname.split('/').pop();
     document.querySelectorAll('.sidebar ul li a').forEach(link => {
