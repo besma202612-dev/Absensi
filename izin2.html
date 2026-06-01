@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Santri Sakit</title>
+    <style>
+        /* ==================== RESET & BASE LAYOUT ==================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .app-container { display: flex; min-height: 100vh; background-color: #f0f2f5; }
+        
+        /* ==================== STYLE SIDEBAR ==================== */
+        .sidebar { width: 250px; background-color: #2c3e50; color: #ecf0f1; padding-top: 20px; position: fixed; height: 100vh; font-family: 'Segoe UI', Arial, sans-serif; z-index: 100; }
+        .sidebar h2 { text-align: center; color: #ffffff; margin-bottom: 30px; font-size: 20px; letter-spacing: 1px; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { display: block; color: #bdc3c7; padding: 15px 25px; text-decoration: none; font-size: 16px; transition: all 0.3s ease; }
+        .sidebar ul li a:hover { color: #ffffff; background-color: #34495e; padding-left: 35px; }
+        .sidebar ul li a.active { background-color: #3b82f6; color: white; font-weight: bold; }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content { margin-left: 250px; flex: 1; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .container { max-width: 950px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        
+        h2 { text-align: center; color: #dc2626; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+
+        /* ==================== FILTER KAMAR ==================== */
+        .filter-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f0f2f5; }
+        .btn-filter { padding: 8px 16px; border: 1px solid #dc2626; background-color: #fff; color: #dc2626; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+        .btn-filter.active, .btn-filter:hover { background-color: #dc2626; color: #fff; }
+        
+        .table-header-control { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .kamar-title { font-size: 18px; color: #1e293b; margin: 0; font-weight: bold; }
+
+        /* ==================== TABEL DATA RESPONSIVE ==================== */
+        .table-responsive { overflow-x: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 12px 15px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        th { background-color: #fee2e2; color: #991b1b; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        
+        .badge-kamar { background-color: #ef4444; color: white; border-radius: 4px; padding: 3px 8px; font-size: 12px; font-weight: bold; }
+        .text-status { font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; }
+
+        /* Tombol Aksi Tambahan */
+        .btn-perpanjang { background-color: #fffbeb; color: #d97706; border: 1px solid #fde68a; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 8px; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 3px; }
+        .btn-perpanjang:hover { background-color: #fef3c7; color: #b45309; }
+
+        /* ==================== DROPDOWN ACCORDION ==================== */
+        .btn-toggle-list { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-toggle-list:hover { background-color: #fecaca; }
+        .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding-left: 5px; }
+        .dropdown-content.open { max-height: 1000px; transition: max-height 0.5s ease-in; }
+
+        .sakit-item-block { padding: 12px 0; border-bottom: 1px dashed #cbd5e1; }
+        .sakit-item-block:last-child { border-bottom: none; padding-bottom: 0; }
+        .text-diagnosa { display: block; font-size: 12px; color: #b45309; font-weight: 500; margin-top: 4px; background-color: #fffbeb; padding: 4px 8px; border-radius: 4px; border-left: 3px solid #f59e0b; width: fit-content; }
+
+        .btn-hapus-log { background-color: #fee2e2; color: #ef4444; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 11px; transition: all 0.2s; }
+        .btn-hapus-log:hover { background-color: #ef4444; color: white; }
+
+        .btn-clear { background-color: #dc2626; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: background 0.2s; }
+        .btn-clear:hover { background-color: #b91c1c; }
+
+        /* ==================== STYLE MODAL POP-UP FORM ==================== */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s ease; }
+        .modal-overlay.show { visibility: visible; opacity: 1; }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: scale(0.8); transition: all 0.3s ease; }
+        .modal-overlay.show .modal-box { transform: scale(1); }
+        .modal-box h3 { margin-bottom: 15px; color: #1e293b; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #475569; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-family: inherit; }
+        .form-group input:disabled { background-color: #f1f5f9; color: #64748b; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn-batal { background-color: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-simpan-modal { background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-simpan-modal:hover { background-color: #2563eb; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <h2>Menu Utama</h2>
+            <ul>
+                <li><a href="index.html">Input Absensi</a></li>
+                <li><a href="list.html">Daftar Santri</a></li>
+                <li><a href="izin1.html">Perizinan</a></li>
+                <li><a href="izin2.html" class="active">History Sakit</a></li>
+                <li><a href="daftar.html">Alpha</a></li>
+                <li><a href="rekap.html">Rekap Kamar</a></li> 
+                <li><a href="history.html">Riwayat</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="container">
+                <h2>📋 Riwayat / Arsip Santri Sakit</h2>
+                <p class="subtitle">(Daftar rekap santri yang sakitnya telah selesai/sembuh atau di-clear)</p>
+
+                <div class="filter-container" id="filterContainer">
+                    <button class="btn-filter active" onclick="pilihFilter('Semua', this)">Semua Kamar</button>
+                </div>
+
+                <div class="table-header-control">
+                    <h3 class="kamar-title" id="currentKamarView">Semua Kamar</h3>
+                    <button class="btn-clear" onclick="hapusSemuaHistorySakit()">🗑️ Bersihkan Semua Arsip</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">Kamar</th>
+                                <th style="width: 40%;">Nama Lengkap</th>
+                                <th style="width: 45%;">List Riwayat Sakit & Medis</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelSakitHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalPerpanjang">
+        <div class="modal-box">
+            <h3>🔄 Perpanjang Masa Sakit</h3>
+            <div class="form-group">
+                <label>Nama Santri</label>
+                <input type="text" id="modalNama" disabled>
+            </div>
+            <div class="form-group">
+                <label>Kamar</label>
+                <input type="text" id="modalKamar" disabled>
+            </div>
+            <div class="form-group">
+                <label>Waktu Mulai Baru</label>
+                <input type="datetime-local" id="modalWaktuMulai">
+            </div>
+            <div class="form-group">
+                <label>Diagnosa / Keterangan Sakit</label>
+                <textarea id="modalDiagnosa" rows="3" placeholder="Contoh: Demam tinggi, perlu istirahat tambahan"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-batal" onclick="tutupModal()">Batal</button>
+                <button class="btn-simpan-modal" onclick="simpanPerpanjangan()">Aktifkan & Kirim</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let filterSekarang = 'Semua';
+
+    // Membuat tombol filter Kamar A1-A13 secara dinamis
+    const filterContainer = document.getElementById('filterContainer');
+    for (let i = 1; i <= 13; i++) {
+        const namaKamar = `A${i}`;
+        const btn = document.createElement('button');
+        btn.className = 'btn-filter'; 
+        btn.textContent = namaKamar;
+        btn.onclick = function() { pilihFilter(namaKamar, btn); };
+        filterContainer.appendChild(btn);
+    }
+
+    function pilihFilter(kamar, elemenTombol) {
+        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        elemenTombol.classList.add('active');
+        filterSekarang = kamar;
+        tampilkanHistorySakit();
+    }
+
+    function formatTanggalLengkap(timestamp) {
+        if (!timestamp) return '-';
+        const d = new Date(timestamp);
+        return d.toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) + 
+               ` (${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')})`;
+    }
+
+    function tampilkanHistorySakit() {
+        const tabelBody = document.getElementById('tabelSakitHistoryBody');
+        const currentKamarView = document.getElementById('currentKamarView');
+        
+        currentKamarView.textContent = filterSekarang === 'Semua' ? 'Semua Kamar' : `Kamar ${filterSekarang}`;
+        tabelBody.innerHTML = '';
+
+        const historySakit = JSON.parse(localStorage.getItem('riwayatSakitAsrama')) || [];
+        
+        const dataDifilter = filterSekarang === 'Semua' 
+            ? historySakit 
+            : historySakit.filter(item => {
+                const kClean = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                return kClean === filterSekarang;
+            });
+
+        if (dataDifilter.length === 0) {
+            tabelBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999; padding:30px;">Tidak ada rekap data santri sakit di kamar ini.</td></tr>`;
+            return;
+        }
+
+        // PROSES PENGELOMPOKAN DATA BERDASARKAN NAMA & KAMAR
+        const petaRekap = {};
+        dataDifilter.forEach(item => {
+            const kamarClean = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+            const keyUnik = `${item.nama.trim().toUpperCase()}_${kamarClean}`;
+            
+            if (!petaRekap[keyUnik]) {
+                petaRekap[keyUnik] = {
+                    nama: item.nama.toUpperCase(),
+                    kamar: kamarClean,
+                    listSakit: []
+                };
+            }
+            petaRekap[keyUnik].listSakit.push(item);
+        });
+
+        const arrayRekap = Object.values(petaRekap);
+        arrayRekap.sort((a, b) => a.nama.localeCompare(b.nama));
+
+        // RENDER ROW DATA TABEL
+        arrayRekap.forEach((santri, indeks) => {
+            const tr = document.createElement('tr');
+            santri.listSakit.sort((a, b) => b.waktuSelesaiNyata - a.waktuSelesaiNyata);
+
+            // Mengambil info diagnosa terakhir dari data paling baru untuk perpanjangan default
+            const diagnosaTerakhir = santri.listSakit[0].keterangan || "Sakit Kembali";
+
+            let htmlListSakit = '';
+            santri.listSakit.forEach(sakit => {
+                const colorStatus = sakit.statusColor || "#64748b";
+                const textStatus = sakit.statusSelesai || "Selesai";
+
+                htmlListSakit += `
+                    <div class="sakit-item-block">
+                        <div style="font-size:13px; color:#475569;">📅 <strong>Mulai:</strong> ${formatTanggalLengkap(sakit.waktuMulai)}</div>
+                        <div style="font-size:13px; color:#059669; margin-top:2px;">✅ <strong>Sembuh:</strong> ${formatTanggalLengkap(sakit.waktuSelesaiNyata)}</div>
+                        <span class="text-diagnosa">🤒 Diagnosa: "${sakit.keterangan || '-'}"</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 6px;">
+                            <span class="text-status" style="background-color:${colorStatus}15; color:${colorStatus}; border: 1px solid ${colorStatus}40">${textStatus}</span>
+                            <button class="btn-hapus-log" onclick="hapusSakitSatuPerSatu('${sakit.waktuMulai}', '${santri.nama}')">Hapus Log</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const idDropdown = `drop_sakit_${indeks}`;
+
+            tr.innerHTML = `
+                <td style="vertical-align: top; padding-top: 15px;"><span class="badge-kamar">${santri.kamar}</span></td>
+                <td style="vertical-align: top; padding-top: 15px;">
+                    <strong>${santri.nama}</strong><br>
+                    <button class="btn-perpanjang" onclick="bukaModalPerpanjang('${santri.nama}', '${santri.kamar}', '${diagnosaTerakhir}')">🔄 Perpanjang</button>
+                </td>
+                <td style="vertical-align: top; padding-top: 12px;">
+                    <button class="btn-toggle-list" onclick="toggleDropdown('${idDropdown}', this)">
+                        <span>Lihat Track Record (${santri.listSakit.length})</span> <span>▼</span>
+                    </button>
+                    <div id="${idDropdown}" class="dropdown-content">
+                        ${htmlListSakit}
+                    </div>
+                </td>
+            `;
+            tabelBody.appendChild(tr);
+        });
+    }
+
+    /* ==================== FUNGSI MODAL FORM PERPANJANGAN ==================== */
+    function bukaModalPerpanjang(nama, kamar, diagnosa) {
+        // Cek validasi apakah anak tersebut sudah aktif di perizinan utama
+        let dataIzinAktif = JSON.parse(localStorage.getItem('perizinanAsrama')) || [];
+        const sudahAdaAktif = dataIzinAktif.some(item => item.nama.toUpperCase() === nama.toUpperCase() && item.kamar.toUpperCase().replace("KAMAR","").trim() === kamar.toUpperCase());
+        
+        if (sudahAdaAktif) {
+            alert(`Gagal: ${nama} saat ini sudah tercatat memiliki perizinan yang masih AKTIF di halaman utama.`);
+            window.location.href = "izin1.html";
+            return;
+        }
+
+        // Isi data otomatis ke field modal form
+        document.getElementById('modalNama').value = nama;
+        document.getElementById('modalKamar').value = kamar;
+        document.getElementById('modalDiagnosa').value = diagnosa;
+
+        // Set default waktu lokal saat ini untuk form input datetime-local
+        const sekarang = new Date();
+        sekarang.setMinutes(sekarang.getMinutes() - sekarang.getTimezoneOffset());
+        document.getElementById('modalWaktuMulai').value = sekarang.toISOString().slice(0, 16);
+
+        // Tampilkan overlay modal
+        document.getElementById('modalPerpanjang').classList.add('show');
+    }
+
+    function tutupModal() {
+        document.getElementById('modalPerpanjang').classList.remove('show');
+    }
+
+    function simpanPerpanjangan() {
+        const nama = document.getElementById('modalNama').value;
+        const kamar = document.getElementById('modalKamar').value;
+        const waktuMulaiInput = document.getElementById('modalWaktuMulai').value;
+        const diagnosaBaru = document.getElementById('modalDiagnosa').value;
+
+        if (!waktuMulaiInput) {
+            alert("Harap tentukan tanggal & waktu mulai perpanjangan izin!");
+            return;
+        }
+
+        let dataIzinAktif = JSON.parse(localStorage.getItem('perizinanAsrama')) || [];
+
+        // Buat objek baru untuk dikirim ke daftar aktif izin1.html
+        const dataBaru = {
+            nama: nama.toUpperCase(),
+            kamar: "KAMAR " + kamar, 
+            keterangan: diagnosaBaru,
+            waktuMulai: new Date(waktuMulaiInput).getTime(), 
+            status: "Sakit" 
+        };
+
+        dataIzinAktif.push(dataBaru);
+        localStorage.setItem('perizinanAsrama', JSON.stringify(dataIzinAktif));
+
+        alert(`Berhasil! Data perizinan sakit ${nama} aktif kembali dengan waktu & catatan baru.`);
+        tutupModal();
+        
+        if (confirm("Ingin beralih ke halaman Perizinan Aktif (izin1.html) untuk meninjau?")) {
+            window.location.href = "izin1.html";
+        } else {
+            tampilkanHistorySakit(); // Refresh data table di halaman saat ini
+        }
+    }
+
+    /* ==================== CONTROLLER DROPDOWN ACCORDION ==================== */
+    function toggleDropdown(idTarget, elemenTombol) {
+        const konten = document.getElementById(idTarget);
+        const ikonPanah = elemenTombol.querySelectorAll('span')[1];
+
+        if (konten.classList.contains('open')) {
+            content.classList.remove('open');
+            ikonPanah.textContent = '▼';
+            elemenTombol.style.backgroundColor = '#fef2f2'; 
+        } else {
+            konten.classList.add('open');
+            ikonPanah.textContent = '▲';
+            elemenTombol.style.backgroundColor = '#fecaca'; 
+        }
+    }
+
+    /* ==================== MANAGEMENT LOG ==================== */
+    function hapusSakitSatuPerSatu(waktuMulai, nama) {
+        if (confirm(`Hapus catatan riwayat medis sakit untuk ${nama}?`)) {
+            let historySakit = JSON.parse(localStorage.getItem('riwayatSakitAsrama')) || [];
+            historySakit = historySakit.filter(item => !(String(item.waktuMulai) === String(waktuMulai) && item.nama.toUpperCase() === nama.toUpperCase()));
+            localStorage.setItem('riwayatSakitAsrama', JSON.stringify(historySakit));
+            tampilkanHistorySakit();
+        }
+    }
+
+    function hapusSemuaHistorySakit() {
+        if (confirm("Apakah Anda yakin ingin menghapus seluruh arsip data santri sakit secara permanen?")) {
+            localStorage.removeItem('riwayatSakitAsrama');
+            tampilkanHistorySakit();
+        }
+    }
+
+    tampilkanHistorySakit();
+
+    // Efek otomatis link aktif menu sidebar
+    const namaFileAktif = window.location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar ul li a').forEach(link => {
+        link.classList.remove('active');
+        if (namaFileAktif === link.getAttribute('href')) link.classList.add('active');
+    });
+</script>
+</body>
+</html>

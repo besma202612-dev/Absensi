@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Absensi Per Kamar</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .app-container { display: flex; min-height: 100vh; background-color: #f0f2f5; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 250px; background-color: #2c3e50; color: #ecf0f1; padding-top: 20px; position: fixed; height: 100vh; font-family: 'Segoe UI', Arial, sans-serif; z-index: 100; }
+        .sidebar h2 { text-align: center; color: #ffffff; margin-bottom: 30px; font-size: 20px; letter-spacing: 1px; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { display: block; color: #bdc3c7; padding: 15px 25px; text-decoration: none; font-size: 16px; transition: all 0.3s ease; }
+        .sidebar ul li a:hover { color: #ffffff; background-color: #34495e; padding-left: 35px; }
+        .sidebar ul li a.active { background-color: #3b82f6; color: white; font-weight: bold; }
+
+        /* MAIN CONTENT */
+        .main-content { margin-left: 250px; flex: 1; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        .container h2 { text-align: center; color: #3b82f6; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+        
+        /* RINGKASAN TOTAL ATAS */
+        .total-summary-box { text-align: center; font-size: 15px; font-weight: bold; color: #1e293b; margin-bottom: 15px; background-color: #eff6ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe; }
+
+        .date-picker-box { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 30px; padding: 15px; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .date-picker-box label { font-weight: 600; color: #475569; font-size: 15px; }
+        .date-input { padding: 8px 15px; border: 2px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 15px; font-weight: bold; color: #1e293b; outline: none; cursor: pointer; }
+
+        /* ACCORDION REKAP KAMAR */
+        .kamar-block { margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .kamar-header-btn { width: 100%; background-color: #ffffff; color: #1e293b; padding: 15px 20px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center; border: none; outline: none; cursor: pointer; text-align: left; }
+        .kamar-header-btn:hover { background-color: #f1f5f9; }
+        .badge-info-kamar { display: flex; align-items: center; gap: 12px; }
+        .badge-count { color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .arrow-icon { color: #64748b; font-size: 14px; transition: transform 0.2s ease; }
+        .kamar-block.active .arrow-icon { transform: rotate(180deg); }
+        .kamar-body { display: none; background-color: #ffffff; border-top: 1px solid #e2e8f0; }
+        .kamar-block.active .kamar-body { display: block; }
+        
+        /* TABLE STYLE */
+        .rekap-table { width: 100%; border-collapse: collapse; }
+        .rekap-table th { background-color: #f8fafc; color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; padding: 12px 20px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+        .rekap-table td { padding: 12px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; }
+        .badge-status { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .btn-kembali { color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 14px; display: inline-block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <h2>Menu Utama</h2>
+            <ul>
+               <li><a href="index.html">Input Absensi</a></li>
+                <li><a href="list.html">Daftar Santri</a></li>
+                <li><a href="izin1.html">Perizinan</a></li>
+                <li><a href="izin2.html">Rekap Sakit</a></li>
+                <li><a href="daftar.html">Alpha</a></li>
+                <li><a href="rekap.html">Rekap Kamar</a></li> 
+                <li><a href="history.html">Riwayat</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="container">
+                <h2>📋 Rekap Ketidakhadiran Per Kamar</h2>
+                <p class="subtitle">Singkronisasi Data Otomatis dari Berbagai Halaman Presensi</p>
+
+                <div id="totalSantriSummary" class="total-summary-box"></div>
+
+                <div class="date-picker-box">
+                    <label for="pilihanTanggal">📅 Pilih Tanggal Rekap:</label>
+                    <input type="date" id="pilihanTanggal" class="date-input" onchange="prosesDanTampilkanRekap()">
+                </div>
+
+                <div id="rekapKamarKonten"></div>
+                <a href="list.html" class="btn-kembali">← Kembali ke Presensi Kamar</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+            const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
+            document.getElementById('pilihanTanggal').value = localISOTime;
+            
+            const namaFileAktif = window.location.pathname.split('/').pop();
+            document.querySelectorAll('.sidebar ul li a').forEach(link => {
+                if (link.getAttribute('href') === namaFileAktif) {
+                    link.classList.add('active');
+                }
+            });
+
+            prosesDanTampilkanRekap();
+        };
+
+        function prosesDanTampilkanRekap() {
+            const kontenDiv = document.getElementById('rekapKamarKonten');
+            const summaryDiv = document.getElementById('totalSantriSummary');
+            const tanggalTerpilih = document.getElementById('pilihanTanggal').value;
+            const hariIni = new Date().toISOString().split('T')[0];
+            
+            // Ambil database master & log absensi global
+            const dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
+            const dataAbsensiAsrama = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
+            const dataIzin = JSON.parse(localStorage.getItem('dataIzinAsrama')) || [];
+            
+            // Tampilkan total master santri secara keseluruhan di atas halaman
+            summaryDiv.textContent = `Total Keseluruhan Santri: ${dataSantriMaster.length} Orang`;
+
+            // Ambil data real-time hari ini milik list.html
+            const statusSantriHarian = JSON.parse(localStorage.getItem('statusSantriHarian')) || {};
+
+            if (dataSantriMaster.length === 0) {
+                kontenDiv.innerHTML = `<p style="text-align:center; color:#999; padding:40px; font-style:italic;">Belum ada data Master Santri.</p>`;
+                summaryDiv.style.display = "none";
+                return;
+            } else {
+                summaryDiv.style.display = "block";
+            }
+
+            const kelompokKamar = {};
+            
+            dataSantriMaster.forEach(santri => {
+                let namaKamarClean = santri.kamar ? santri.kamar.trim().toUpperCase().replace("KAMAR", "").trim() : "TANPA KAMAR";
+                if (!kelompokKamar[namaKamarClean]) {
+                    kelompokKamar[namaKamarClean] = [];
+                }
+                
+                const namaSantriClean = santri.nama.trim().toLowerCase();
+                
+                // 1. CEK DATA DARI DAFTAR.HTML / DATABASE PERMANEN
+                const recordAbsensi = dataAbsensiAsrama.find(item => {
+                    const itemNama = item.nama || "";
+                    const itemKamar = item.kamar || "";
+                    let itemTanggal = item.tanggal || "";
+                    if (itemTanggal.includes('T')) itemTanggal = itemTanggal.split('T')[0];
+                    
+                    return itemNama.trim().toLowerCase() === namaSantriClean && 
+                           itemKamar.trim().toUpperCase().replace("KAMAR", "").trim() === namaKamarClean && 
+                           itemTanggal.trim() === tanggalTerpilih;
+                });
+
+                // 2. CEK DATA REAL-TIME HARI INI DARI LIST.HTML
+                const keyStatusListHTML = `${namaKamarClean}_${namaSantriClean}`;
+                const statusDariListHTML = statusSantriHarian[keyStatusListHTML];
+
+                // 3. CEK KONDISI IZIN AKTIF (Perbaikan Validasi Menggunakan Rentang Tanggal Objek Hari)
+                const sedangIzin = dataIzin.find(item => {
+                    if (item.nama.trim().toLowerCase() !== namaSantriClean) return false;
+                    
+                    // Membuat batas deteksi objek tanggal mulai dan tanggal habis (mengabaikan jam spesifik)
+                    const tglMulaiFormat = new Date(item.waktuMulai).toISOString().split('T')[0];
+                    const tglHabisFormat = new Date(item.waktuHabis).toISOString().split('T')[0];
+                    
+                    // Santri dianggap berstatus izin jika tanggal rekap berada di dalam rentang izin aktifnya
+                    return tanggalTerpilih >= tglMulaiFormat && tanggalTerpilih <= tglHabisFormat;
+                });
+
+                // PENENTUAN STATUS AKHIR (SINKRONISASI KEDUA HALAMAN)
+                let statusFinal = "Hadir";
+                
+                if (sedangIzin) {
+                    statusFinal = "Izin";
+                } else if (tanggalTerpilih === hariIni && statusDariListHTML === "absen") {
+                    statusFinal = "Absen"; // Prioritas data klik langsung dari list.html jika hari ini
+                } else if (recordAbsensi) {
+                    const st = recordAbsensi.status.trim().toLowerCase();
+                    if (st === "absen" || st === "alpha" || st === "tidak hadir") {
+                        statusFinal = "Absen";
+                    } else if (st === "izin" || st === "sakit") {
+                        statusFinal = "Izin";
+                    }
+                }
+
+                kelompokKamar[namaKamarClean].push({
+                    nama: santri.nama.trim().toUpperCase(),
+                    status: statusFinal
+                });
+            });
+
+            let htmlFinal = "";
+            const listKamarTerurut = Object.keys(kelompokKamar).sort((a, b) => {
+                return (parseInt(a.replace(/[^\d]/g, '')) || 0) - (parseInt(b.replace(/[^\d]/g, '')) || 0);
+            });
+
+            listKamarTerurut.forEach(kamar => {
+                const dataKamar = kelompokKamar[kamar];
+                dataKamar.sort((a, b) => a.nama.localeCompare(b.nama));
+
+                const totalSantriKamar = dataKamar.length; // Perhitungan jumlah santri di kamar ini
+                const totalAbsen = dataKamar.filter(s => s.status === "Absen").length;
+                const totalIzin = dataKamar.filter(s => s.status === "Izin").length;
+                const totalHadir = dataKamar.filter(s => s.status === "Hadir").length;
+
+                htmlFinal += `
+                    <div class="kamar-block" id="block_${kamar}">
+                        <button class="kamar-header-btn" onclick="toggleDropdownKamar('${kamar}')">
+                            <span>🚪 KAMAR ${kamar} <span style="font-size:13px; color:#475569; font-weight:normal; margin-left:5px;">(${totalSantriKamar} Santri)</span></span>
+                            <div class="badge-info-kamar">
+                                <span style="font-size:12px; color:#64748b; font-weight:600;">
+                                    (H: ${totalHadir} | A: ${totalAbsen} ${totalIzin > 0 ? `| I: ${totalIzin}` : ''})
+                                </span>
+                                <span class="badge-count" style="background-color: ${totalAbsen > 0 ? '#ef4444' : '#10b981'}">
+                                    ${totalAbsen} Absen
+                                </span>
+                                <span class="arrow-icon">▼</span>
+                            </div>
+                        </button>
+                        <div class="kamar-body">
+                            <table class="rekap-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px; text-align: center;">No</th>
+                                        <th>Nama Lengkap Santri</th>
+                                        <th style="text-align: center; width: 140px;">Status Presensi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                dataKamar.forEach((santri, index) => {
+                    let warnaBadge = "background-color: #dcfce7; color: #166534;";
+                    if (santri.status === "Absen") warnaBadge = "background-color: #fee2e2; color: #991b1b;";
+                    if (santri.status === "Izin") warnaBadge = "background-color: #fef3c7; color: #92400e;";
+
+                    htmlFinal += `
+                        <tr>
+                            <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
+                            <td><span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span></td>
+                            <td style="text-align: center;">
+                                <span class="badge-status" style="${warnaBadge}">${santri.status.toUpperCase()}</span>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                htmlFinal += `</tbody></table></div></div>`;
+            });
+
+            kontenDiv.innerHTML = htmlFinal || `<p style="text-align:center; color:#999; padding:40px;">Tidak ada data.</p>`;
+        }
+
+        function toggleDropdownKamar(kamarId) {
+            const elemenBlock = document.getElementById(`block_${kamarId}`);
+            if(elemenBlock) elemenBlock.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>()

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Keterangan Izin</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .izin-box { background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 480px; }
+        h2 { text-align: center; color: #d97706; margin-bottom: 10px; }
+        p { text-align: center; color: #666; font-size: 14px; margin-bottom: 25px; }
+        .info-user { background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 12px; margin-bottom: 20px; font-size: 14px; color: #92400e; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #4b5563; font-weight: 600; font-size: 14px; }
+        .input-field { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        .input-field:focus { border-color: #f59e0b; outline: none; }
+        
+        .durasi-triple-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .durasi-item { display: flex; flex-direction: column; position: relative; }
+        .durasi-item input { text-align: center; padding-right: 5px; }
+        .durasi-item span { font-size: 11px; color: #718096; text-align: center; margin-top: 4px; font-weight: 500; }
+
+        .btn-kirim { width: 100%; padding: 14px; border: none; border-radius: 6px; background-color: #f59e0b; color: white; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .btn-batal { display: block; text-align: center; margin-top: 15px; color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="izin-box">
+    <h2 id="formTitle">Keterangan Perizinan</h2>
+    <p id="formSubTitle">Silakan isi alasan dan tentukan waktu durasi izin</p>
+
+    <div class="info-user" id="infoUser">Memuat data...</div>
+
+    <form onsubmit="simpanIzin(event)">
+        <div class="form-group">
+            <label for="keterangan">Alasan / Keterangan Izin</label>
+            <input type="text" id="keterangan" class="input-field" placeholder="Contoh: Pulang kampung, Berobat" required>
+        </div>
+
+        <div class="form-group">
+            <label for="pengurus">Pengurus Izin (Yang Mengizinkan)</label>
+            <input type="text" id="pengurus" class="input-field" placeholder="Masukkan nama pengurus..." required>
+        </div>
+
+        <div class="form-group">
+            <label for="waktuMulaiInput">Waktu Mulai Berjalan Izin (Format 24 Jam)</label>
+            <input type="datetime-local" id="waktuMulaiInput" class="input-field" step="60" required>
+            <span style="font-size: 11px; color: #666; display: block; margin-top: 4px;">*Biarkan default jika izin dimulai hari ini & jam sekarang.</span>
+        </div>
+
+        <div class="form-group">
+            <label>Durasi Jangka Waktu Izin (Bisa Kombinasi)</label>
+            <div class="durasi-triple-group">
+                <div class="durasi-item">
+                    <input type="number" id="durasiHari" class="input-field" min="0" value="0" placeholder="0">
+                    <span>Hari</span>
+                </div>
+                <div class="durasi-item">
+                    <input type="number" id="durasiJam" class="input-field" min="0" value="0" placeholder="0">
+                    <span>Jam</span>
+                </div>
+                <div class="durasi-item">
+                    <input type="number" id="durasiMenit" class="input-field" min="0" value="0" placeholder="0">
+                    <span>Menit</span>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-kirim">Simpan & Lihat Daftar Izin</button>
+    </form>
+    <a href="list.html" id="btnLinkBatal" class="btn-batal">✕ Batalkan</a>
+</div>
+
+<script>
+    const nama = sessionStorage.getItem('tempNama');
+    const kamar = sessionStorage.getItem('tempKamar');
+    const isEditMode = sessionStorage.getItem('editMode') === 'true';
+    const editWaktuMulai = sessionStorage.getItem('editWaktuMulai');
+
+    if (!nama || !kamar) { 
+        window.location.href = "list.html"; 
+    }
+
+    function formatDateTimeLocal24(date) {
+        const pad = (num) => (num < 10 ? '0' : '') + num;
+        const tahun = date.getFullYear();
+        const bulan = pad(date.getMonth() + 1);
+        const tanggal = pad(date.getDate());
+        const jam = pad(date.getHours()); 
+        const menit = pad(date.getMinutes());
+        
+        return `${tahun}-${bulan}-${tanggal}T${jam}:${menit}`;
+    }
+
+    document.getElementById('waktuMulaiInput').value = formatDateTimeLocal24(new Date());
+    document.getElementById('btnLinkBatal').href = "list.html";
+
+    if (isEditMode) {
+        document.getElementById('formTitle').innerText = "Ubah Durasi Izin";
+        document.getElementById('formSubTitle').innerText = "Silakan tentukan durasi perpanjangan/perubahan izin baru";
+        document.getElementById('btnSubmit').innerText = "Perbarui Durasi Izin";
+        document.getElementById('btnLinkBatal').innerText = "✕ Batalkan Perubahan";
+        document.getElementById('btnLinkBatal').href = "izin1.html";
+
+        let dataIzin = JSON.parse(localStorage.getItem('dataIzinAsrama')) || [];
+        let dataLama = dataIzin.find(item => String(item.waktuMulai) === String(editWaktuMulai));
+        if (dataLama) {
+            document.getElementById('keterangan').value = dataLama.keterangan;
+            // Memuat kembali data pengurus lama jika dalam mode edit
+            document.getElementById('pengurus').value = dataLama.pengurus || "";
+            document.getElementById('waktuMulaiInput').value = formatDateTimeLocal24(new Date(Number(dataLama.waktuMulai)));
+        }
+    }
+
+    document.getElementById('infoUser').innerHTML = isEditMode 
+        ? `Mengubah Izin: <strong>${nama}</strong> (Kamar ${kamar})` 
+        : `Izin untuk: <strong>${nama}</strong> (Kamar ${kamar})`;
+
+    function simpanIzin(event) {
+        event.preventDefault();
+        
+        const keterangan = document.getElementById('keterangan').value;
+        const pengurus = document.getElementById('pengurus').value.trim().toUpperCase(); // Menyimpan dalam format kapital
+        const waktuMulaiPilihan = new Date(document.getElementById('waktuMulaiInput').value).getTime();
+
+        const h = parseInt(document.getElementById('durasiHari').value) || 0;
+        const j = parseInt(document.getElementById('durasiJam').value) || 0;
+        const m = parseInt(document.getElementById('durasiMenit').value) || 0;
+
+        if (h === 0 && j === 0 && m === 0) {
+            alert("Silakan masukkan durasi waktu izin (minimal isi salah satu kolom: Hari, Jam, atau Menit)!");
+            return;
+        }
+
+        const msHari = h * 24 * 60 * 60 * 1000;
+        const msJam = j * 60 * 60 * 1000;
+        const msMenit = m * 60 * 1000;
+        const totalTambahanMilidetik = msHari + msJam + msMenit;
+
+        let kumpulanTeks = [];
+        if (h > 0) kumpulanTeks.push(`${h} Hari`);
+        if (j > 0) kumpulanTeks.push(`${j} Jam`);
+        if (m > 0) kumpulanTeks.push(`${m} Menit`);
+        const durasiTeksBaru = kumpulanTeks.join(" ");
+
+        let dataIzin = JSON.parse(localStorage.getItem('dataIzinAsrama')) || [];
+
+        if (isEditMode) {
+            const index = dataIzin.findIndex(item => String(item.waktuMulai) === String(editWaktuMulai));
+            if (index !== -1) {
+                dataIzin[index].waktuMulai = waktuMulaiPilihan;
+                dataIzin[index].waktuHabis = waktuMulaiPilihan + totalTambahanMilidetik;
+                dataIzin[index].durasiTeks = durasiTeksBaru;
+                dataIzin[index].keterangan = keterangan;
+                dataIzin[index].pengurus = pengurus; // Menyimpan perubahan pengurus
+            }
+        } else {
+            const waktuHabisSkarang = waktuMulaiPilihan + totalTambahanMilidetik;
+
+            dataIzin.push({ 
+                waktuMulai: waktuMulaiPilihan,
+                waktuHabis: waktuHabisSkarang, 
+                durasiTeks: durasiTeksBaru,
+                kamar: kamar, 
+                nama: nama.toUpperCase(), 
+                status: 'Izin', 
+                keterangan: keterangan,
+                pengurus: pengurus // Ditambahkan ke dalam penyimpanan object utama
+            });
+        }
+        
+        localStorage.setItem('dataIzinAsrama', JSON.stringify(dataIzin));
+        
+        sessionStorage.removeItem('tempNama');
+        sessionStorage.removeItem('tempKamar');
+        sessionStorage.removeItem('editMode');
+        sessionStorage.removeItem('editWaktuMulai');
+        
+        window.location.href = 'izin1.html';
+    }
+</script>
+</body>
+</html>
