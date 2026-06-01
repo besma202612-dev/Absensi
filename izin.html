@@ -9,188 +9,292 @@
         .izin-box { background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 480px; }
         h2 { text-align: center; color: #d97706; margin-bottom: 10px; }
         p { text-align: center; color: #666; font-size: 14px; margin-bottom: 25px; }
-        .info-user { background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 12px; margin-bottom: 20px; font-size: 14px; color: #92400e; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 6px; color: #475569; font-weight: 600; font-size: 14px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; background-color: #f8fafc; box-sizing: border-box; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #f59e0b; background-color: #ffffff; }
-        .grid-durasi { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-submit { width: 100%; background-color: #d97706; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+        .info-user { background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 12px; margin-bottom: 20px; font-size: 14px; color: #92400e; font-weight: 600; text-align: center; }
+        label { display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 6px; margin-top: 15px; }
+        input[type="text"], input[type="datetime-local"], select, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: #f59e0b; }
+        
+        /* Layout Durasi Gabungan */
+        .durasi-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 5px; }
+        .durasi-input-box { text-align: center; }
+        .durasi-input-box input { width: 100%; text-align: center; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+        .durasi-input-box span { display: block; font-size: 12px; color: #6b7280; margin-top: 4px; font-weight: 500; }
+        
+        .preview-durasi { background-color: #f3f4f6; padding: 10px; border-radius: 6px; font-size: 13px; color: #4b5563; margin-top: 8px; border-left: 4px solid #d1d5db; font-weight: 500; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        .btn-submit { background-color: #d97706; color: #ffffff; }
         .btn-submit:hover { background-color: #b45309; }
-        .btn-batal { width: 100%; background-color: #e2e8f0; color: #475569; border: none; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; text-decoration: none; display: block; box-sizing: border-box; transition: background 0.2s; }
-        .btn-batal:hover { background-color: #cbd5e1; }
+        .btn-cancel { background-color: #e5e7eb; color: #374151; }
+        .btn-cancel:hover { background-color: #d1d5db; }
     </style>
 </head>
 <body>
 
     <div class="izin-box">
-        <h2 id="titleHalaman">Form Keterangan Izin</h2>
-        <p>Silakan lengkapi detail data perizinan santri di bawah ini.</p>
+        <h2>📝 Formulir Perizinan</h2>
+        <p>Silakan lengkapi data durasi dan keterangan izin santri</p>
 
-        <div class="info-user">
-            <strong>👤 Nama:</strong> <span id="textNama">-</span><br>
-            <strong>🚪 Kamar:</strong> <span id="textKamar">-</span>
-        </div>
+        <div class="info-user" id="labelNamaSantri">SANTRI: LOGGING DATA...</div>
 
-        <form id="formIzin" onsubmit="simpanDataIzin(event)">
-            <div class="form-group grid-durasi">
-                <div>
-                    <label for="inputDurasi">🔢 Angka Durasi</label>
-                    <input type="number" id="inputDurasi" min="1" placeholder="Contoh: 3" required>
+        <form id="formPerizinanAsrama" onsubmit="simpanDataIzinCloud(event)">
+            <label for="pilihKamarIzin">Kamar Santri:</label>
+            <select id="pilihKamarIzin" required>
+                <option value="" disabled selected>-- Pilih Kamar --</option>
+                <option value="A1">Kamar A1</option>
+                <option value="A2">Kamar A2</option>
+                <option value="A3">Kamar A3</option>
+                <option value="A4">Kamar A4</option>
+                <option value="A5">Kamar A5</option>
+                <option value="A6">Kamar A6</option>
+                <option value="A7">Kamar A7</option>
+                <option value="A8">Kamar A8</option>
+                <option value="A9">Kamar A9</option>
+                <option value="A10">Kamar A10</option>
+                <option value="A11">Kamar A11</option>
+                <option value="A12">Kamar A12</option>
+                <option value="A13">Kamar A13</option>
+            </select>
+
+            <label for="waktuMulaiIzin">Waktu Mulai Keluar:</label>
+            <input type="datetime-local" id="waktuMulaiIzin" required onchange="hitungWaktuSelesaiOtomatis()">
+
+            <label>Durasi Masa Izin:</label>
+            <div class="durasi-group">
+                <div class="durasi-input-box">
+                    <input type="number" id="durasiHari" min="0" value="0" oninput="hitungWaktuSelesaiOtomatis()">
+                    <span>Hari</span>
                 </div>
-                <div>
-                    <label for="selectSatuan">📅 Satuan Waktu</label>
-                    <select id="selectSatuan" required>
-                        <option value="jam">Jam</option>
-                        <option value="hari">Hari</option>
-                        <option value="minggu">Minggu</option>
-                    </select>
+                <div class="durasi-input-box">
+                    <input type="number" id="durasiJam" min="0" max="23" value="0" oninput="hitungWaktuSelesaiOtomatis()">
+                    <span>Jam</span>
+                </div>
+                <div class="durasi-input-box">
+                    <input type="number" id="durasiMenit" min="0" max="59" value="0" oninput="hitungWaktuSelesaiOtomatis()">
+                    <span>Menit</span>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="inputPengurus">✍️ Pengurus Penanggung Jawab</label>
-                <input type="text" id="inputPengurus" placeholder="Nama pengurus yang memberi izin..." required style="text-transform: uppercase;">
+            <div class="preview-durasi" id="teksPreviewKembali">
+                📅 Perkiraan Kembali: Silakan tentukan mulai & durasi.
             </div>
 
-            <div class="form-group">
-                <label for="inputTextKeterangan">📝 Alasan / Keterangan Izin</label>
-                <textarea id="inputTextKeterangan" rows="3" placeholder="Contoh: Pulang karena acara keluarga / Sakit di UKS..." required></textarea>
-            </div>
+            <label for="keteranganIzin">Alasan / Keterangan Izin:</label>
+            <textarea id="keteranganIzin" rows="3" placeholder="Contoh: Pulang karena acara keluarga / Sakit perlu rawat jalan" required></textarea>
 
-            <button type="submit" class="btn-submit">💾 Simpan & Aktifkan Izin</button>
-            <a href="index.html" class="btn-batal">❌ Batalkan</a>
+            <label for="namaPengurus">Nama Pengurus Penanggung Jawab:</label>
+            <input type="text" id="namaPengurus" placeholder="Masukkan nama pengurus" required>
+
+            <div class="btn-group">
+                <button type="button" class="btn-cancel" onclick="batalkanForm()">❌ Batal</button>
+                <button type="submit" class="btn-submit">💾 Simpan Data Izin</button>
+            </div>
         </form>
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        // 1. KONFIGURASI DATABASE CLOUD FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIxABuKyV-Yz6QkjTBEoj-tZUlqZFLt1s",
+            authDomain: "absensi-besma.firebaseapp.com",
+            databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "absensi-besma",
+            storageBucket: "absensi-besma.firebasestorage.app",
+            messagingSenderId: "903515270638",
+            appId: "1:903515270638:web:bda8fb36985ca7e366da6e"
+        };
 
-<script>
-    // Konfigurasi Firebase Realtime Database Anda
-    const firebaseConfig = {
-        apiKey: "AIzaSyBxA...",
-        authDomain: "absensi-besma.firebaseapp.com",
-        databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "absensi-besma",
-        storageBucket: "absensi-besma.appspot.com",
-        messagingSenderId: "1234567890",
-        appId: "1:12345678:web:abcd1234"
-    };
-    
-    // Inisialisasi Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // Variabel penampung lokal untuk sinkronisasi dengan awan
-    let globalDataIzinAsrama = [];
-
-    // Deteksi Mode Edit atau Input Baru via Session Storage bawaan asli
-    const isEditMode = sessionStorage.getItem('editMode') === 'true';
-    const editWaktuMulai = sessionStorage.getItem('editWaktuMulai');
-
-    let nama = "";
-    let kamar = "";
-
-    // Ambil data secara real-time dari Firebase cloud
-    db.ref('dataIzinAsrama').on('value', (snapshot) => {
-        globalDataIzinAsrama = snapshot.val() || [];
-        
-        // Jalankan pengisian form otomatis jika dalam mode edit setelah data cloud sinkron
-        if (isEditMode && editWaktuMulai) {
-            const dataLama = globalDataIzinAsrama.find(item => String(item.waktuMulai) === String(editWaktuMulai));
-            if (dataLama) {
-                nama = dataLama.nama;
-                kamar = dataLama.kamar;
-                document.getElementById('textNama').innerText = nama.toUpperCase();
-                document.getElementById('textKamar').innerText = "KAMAR " + kamar;
-                document.getElementById('inputTextKeterangan').value = dataLama.keterangan || "";
-                document.getElementById('inputPengurus').value = dataLama.pengurus || "";
-                document.getElementById('titleHalaman').innerText = "📝 Edit Data Perizinan";
-            }
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
-    });
+        const db = firebase.database();
 
-    // Inisialisasi data lemparan awal saat halaman dimuat
-    window.onload = function() {
-        if (!isEditMode) {
-            nama = sessionStorage.getItem('tempNama');
-            kamar = sessionStorage.getItem('tempKamar');
+        // 2. STATE VARIABEL MASTER
+        let namaGlobal = '';
+        let globalDataIzinAsrama = [];
+        let tanggalSelesaiHasilHitung = '';
 
-            if (!nama || !kamar) {
-                alert("Akses tidak sah! Silakan tentukan santri melalui Form Absensi atau Daftar Kamar.");
+        // 3. CAPTURE DATA DARI SESSION JEMBATAN SEBELUMNYA
+        window.onload = function() {
+            namaGlobal = sessionStorage.getItem('tempNama') || '';
+            let kamarAwal = sessionStorage.getItem('tempKamar') || '';
+            let tanggalAwal = sessionStorage.getItem('tempTanggal') || '';
+
+            if (!namaGlobal) {
+                alert("Sesi kosong, mengembalikan Anda ke halaman utama.");
                 window.location.href = 'index.html';
                 return;
             }
 
-            document.getElementById('textNama').innerText = nama.toUpperCase();
-            document.getElementById('textKamar').innerText = "KAMAR " + kamar;
-        }
-    };
-
-    // ==================== FUNGSI UTAMA EKSEKUSI FORM ====================
-    function simpanDataIzin(event) {
-        event.preventDefault();
-
-        const durasiAngka = parseInt(document.getElementById('inputDurasi').value);
-        const satuanWaktu = document.getElementById('selectSatuan').value;
-        const keterangan = document.getElementById('inputTextKeterangan').value.trim();
-        const pengurus = document.getElementById('inputPengurus').value.trim().toUpperCase();
-
-        if (!durasiAngka || durasiAngka < 1 || !keterangan || !pengurus) {
-            alert("Harap isi seluruh data formulir dengan benar!");
-            return;
-        }
-
-        // Kalkulasi perhitungan waktu milidetik sesuai kode asli
-        let totalTambahanMilidetik = 0;
-        if (satuanWaktu === 'jam') totalTambahanMilidetik = durasiAngka * 60 * 60 * 1000;
-        else if (satuanWaktu === 'hari') totalTambahanMilidetik = durasiAngka * 24 * 60 * 60 * 1000;
-        else if (satuanWaktu === 'minggu') totalTambahanMilidetik = durasiAngka * 7 * 24 * 60 * 60 * 1000;
-
-        const durasiTeksBaru = `${durasiAngka} ${satuanWaktu}`;
-        const waktuMulaiPilihan = Date.now();
-
-        if (isEditMode) {
-            // Edit item di dalam array berdasarkan waktuMulai yang cocok
-            const index = globalDataIzinAsrama.findIndex(item => String(item.waktuMulai) === String(editWaktuMulai));
-            if (index !== -1) {
-                globalDataIzinAsrama[index].waktuMulai = waktuMulaiPilihan;
-                globalDataIzinAsrama[index].waktuHabis = waktuMulaiPilihan + totalTambahanMilidetik;
-                globalDataIzinAsrama[index].durasiTeks = durasiTeksBaru;
-                globalDataIzinAsrama[index].keterangan = keterangan;
-                globalDataIzinAsrama[index].pengurus = pengurus;
-            }
-        } else {
-            // Tambahkan objek data izin baru ke dalam array
-            const waktuHabisSkarang = waktuMulaiPilihan + totalTambahanMilidetik;
-            globalDataIzinAsrama.push({ 
-                waktuMulai: waktuMulaiPilihan,
-                waktuHabis: waktuHabisSkarang, 
-                durasiTeks: durasiTeksBaru,
-                kamar: kamar, 
-                nama: nama.toUpperCase(), 
-                status: 'Izin', 
-                keterangan: keterangan,
-                pengurus: pengurus
-            });
-        }
-        
-        // Simpan array data terbaru kembali ke Firebase Cloud Node 'dataIzinAsrama'
-        db.ref('dataIzinAsrama').set(globalDataIzinAsrama)
-            .then(() => {
-                // Bersihkan penampung temporary session bawaan asli
-                sessionStorage.removeItem('tempNama');
-                sessionStorage.removeItem('tempKamar');
-                sessionStorage.removeItem('editMode');
-                sessionStorage.removeItem('editWaktuMulai');
+            // Tampilkan Nama Master di Banner Atas
+            document.getElementById('labelNamaSantri').textContent = `SANTRI: ${namaGlobal.toUpperCase()}`;
+            
+            // Set Otomatis Dropdown Kamar jika datanya terdeteksi ada
+            if (kamarAwal) {
+                let kClean = kamarAwal.trim().toUpperCase().replace("KAMAR", "").trim();
+                let namaKamarLengkap = kClean.startsWith('A') ? kClean : `A${kClean}`;
+                const selectKamar = document.getElementById('pilihKamarIzin');
                 
-                window.location.href = 'izin1.html';
-            })
-            .catch((error) => {
-                alert("Gagal menyimpan ke database cloud: " + error.message);
+                // Cari opsi yang sesuai di dalam dropdown select
+                for (let i = 0; i < selectKamar.options.length; i++) {
+                    if (selectKamar.options[i].value === namaKamarLengkap) {
+                        selectKamar.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            // Atur Waktu Mulai default ke waktu saat ini atau peninggalan form index
+            const inputWaktuMulai = document.getElementById('waktuMulaiIzin');
+            if (tanggalAwal) {
+                const sekarang = new Date();
+                const jamMenitTeks = sekarang.toTimeString().split(' ')[0].substring(0, 5); // Ambil format HH:MM saat ini
+                inputWaktuMulai.value = `${tanggalAwal}T${jamMenitTeks}`;
+            } else {
+                const skr = new Date();
+                const offset = skr.getTimezoneOffset();
+                const wktLokal = new Date(skr.getTime() - (offset * 60 * 1000)).toISOString().substring(0, 16);
+                inputWaktuMulai.value = wktLokal;
+            }
+
+            // Ambil Log Perizinan yang ada dari Cloud Firebase
+            db.ref('dataIzinAsrama').on('value', (snapshot) => {
+                globalDataIzinAsrama = snapshot.val() || [];
             });
-    }
-</script>
+
+            // Jalankan kalkulasi preview pertama kali
+            hitungWaktuSelesaiOtomatis();
+        };
+
+        // 4. FUNGSI HITUNG PARALEL (HARI + JAM + MENIT GABUNGAN)
+        function hitungWaktuSelesaiOtomatis() {
+            const waktuMulaiMentah = document.getElementById('waktuMulaiIzin').value;
+            const h = parseInt(document.getElementById('durasiHari').value) || 0;
+            const j = parseInt(document.getElementById('durasiJam').value) || 0;
+            const m = parseInt(document.getElementById('durasiMenit').value) || 0;
+            const previewBox = document.getElementById('teksPreviewKembali');
+
+            if (!waktuMulaiMentah) return;
+
+            // Buat objek penanggalan dari waktu mulai awal
+            const tanggalHasil = new Date(waktuMulaiMentah);
+
+            // Tambahkan total milidetik gabungan dari Hari, Jam, dan Menit sekaligus
+            tanggalHasil.setDate(tanggalHasil.getDate() + h);
+            tanggalHasil.setHours(tanggalHasil.getHours() + j);
+            tanggalHasil.setMinutes(tanggalHasil.getMinutes() + m);
+
+            // Simpan hasil string global dengan format ISO murni (YYYY-MM-DDTHH:MM)
+            const offset = tanggalHasil.getTimezoneOffset();
+            tanggalSelesaiHasilHitung = new Date(tanggalHasil.getTime() - (offset * 60 * 1000)).toISOString().substring(0, 16);
+
+            // Tampilkan teks info rapi yang mudah dibaca manusia ke kotak preview
+            const opsiFormat = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const tglTeksReadable = tanggalHasil.toLocaleDateString('id-ID', opsiFormat);
+            const jamTeksReadable = String(tanggalHasil.getHours()).padStart(2, '0') + ':' + String(tanggalHasil.getMinutes()).padStart(2, '0');
+
+            previewBox.innerHTML = `⏳ <strong>Perkiraan Kembali:</strong> ${tglTeksReadable} pukul <strong>${jamTeksReadable} WIB</strong>`;
+        }
+
+        // 5. SUBMIT DATA BARU / UPDATE KE CLOUD REALTIME FIREBASE
+        function simpanDataIzinCloud(e) {
+            e.preventDefault();
+            
+            const kamarTerpilih = document.getElementById('pilihKamarIzin').value;
+            const waktuMulai = document.getElementById('waktuMulaiIzin').value;
+            const h = parseInt(document.getElementById('durasiHari').value) || 0;
+            const j = parseInt(document.getElementById('durasiJam').value) || 0;
+            const m = parseInt(document.getElementById('durasiMenit').value) || 0;
+            const keterangan = document.getElementById('keteranganIzin').value.trim();
+            const pengurus = document.getElementById('namaPengurus').value.trim();
+
+            if (!kamarTerpilih) {
+                alert("Silakan pilih kamar santri terlebih dahulu.");
+                return;
+            }
+
+            if (h === 0 && j === 0 && m === 0) {
+                alert("Durasi masa izin tidak boleh kosong (setidaknya isi Hari, Jam, atau Menit).");
+                return;
+            }
+
+            // Susun string teks durasi gabungan untuk keperluan log rekap riwayat di tabel
+            let arrayTeksDurasi = [];
+            if (h > 0) arrayTeksDurasi.push(`${h} Hari`);
+            if (j > 0) arrayTeksDurasi.push(`${j} Jam`);
+            if (m > 0) arrayTeksDurasi.push(`${m} Menit`);
+            const teksDurasiFinal = arrayTeksDurasi.join(', ');
+
+            const isEditMode = sessionStorage.getItem('editMode') === 'true';
+            const editWaktuMulaiKey = sessionStorage.getItem('editWaktuMulai');
+
+            if (isEditMode && editWaktuMulaiKey) {
+                // Proses Edit/Update baris data yang sudah ada sebelumnya
+                let idx = -1;
+                if (Array.isArray(globalDataIzinAsrama)) {
+                    idx = globalDataIzinAsrama.findIndex(item => item && item.waktuMulai === editWaktuMulaiKey && item.nama.trim().toUpperCase() === namaGlobal.trim().toUpperCase());
+                } else {
+                    Object.keys(globalDataIzinAsrama).forEach(key => {
+                        if (globalDataIzinAsrama[key] && globalDataIzinAsrama[key].waktuMulai === editWaktuMulaiKey && globalDataIzinAsrama[key].nama.trim().toUpperCase() === namaGlobal.trim().toUpperCase()) {
+                            idx = key;
+                        }
+                    });
+                }
+
+                const dataBaruUpdate = {
+                    waktuMulai: waktuMulai,
+                    waktuSelesai: tanggalSelesaiHasilHitung,
+                    durasiTeks: teksDurasiFinal,
+                    kamar: kamarTerpilih,
+                    nama: namaGlobal.toUpperCase(),
+                    status: 'Izin',
+                    keterangan: keterangan,
+                    pengurus: pengurus
+                };
+
+                if (idx !== -1) {
+                    db.ref(`dataIzinAsrama/${idx}`).set(dataBaruUpdate).then(() => suksesSimpanMeluncur());
+                }
+            } else {
+                // Proses Tambah Log Baru Murni (.push) ke Cloud Array Firebase
+                if (!Array.isArray(globalDataIzinAsrama)) {
+                    globalDataIzinAsrama = [];
+                }
+                globalDataIzinAsrama.push({
+                    waktuMulai: waktuMulai,
+                    waktuSelesai: tanggalSelesaiHasilHitung,
+                    durasiTeks: teksDurasiFinal,
+                    kamar: kamarTerpilih,
+                    nama: namaGlobal.toUpperCase(),
+                    status: 'Izin',
+                    keterangan: keterangan,
+                    pengurus: pengurus
+                });
+                
+                const cleanArrayKirim = globalDataIzinAsrama.filter(item => item !== null);
+                db.ref('dataIzinAsrama').set(cleanArrayKirim).then(() => suksesSimpanMeluncur());
+            }
+        }
+
+        function suksesSimpanMeluncur() {
+            alert("Data perizinan santri berhasil disimpan ke cloud database.");
+            sessionStorage.removeItem('tempNama');
+            sessionStorage.removeItem('tempKamar');
+            sessionStorage.removeItem('editMode');
+            sessionStorage.removeItem('editWaktuMulai');
+            window.location.href = 'izin1.html';
+        }
+
+        function batalkanForm() {
+            sessionStorage.removeItem('tempNama');
+            sessionStorage.removeItem('tempKamar');
+            sessionStorage.removeItem('editMode');
+            sessionStorage.removeItem('editWaktuMulai');
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
