@@ -14,241 +14,364 @@
         .sidebar ul { list-style: none; }
         .sidebar ul li a { display: block; color: #bdc3c7; padding: 15px 25px; text-decoration: none; font-size: 16px; transition: all 0.3s ease; }
         .sidebar ul li a:hover { color: #ffffff; background-color: #34495e; padding-left: 35px; }
-        .sidebar ul li a.active { background-color: #3b82f6; color: white; font-weight: bold; }
+        .sidebar ul li a.active { background-color: #10b981; color: white; font-weight: bold; border-left: 4px solid #047857; }
 
         /* MAIN CONTENT */
-        .main-content { margin-left: 250px; flex: 1; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
-        .container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
-        .container h2 { text-align: center; color: #3b82f6; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+        .main-content { flex: 1; margin-left: 250px; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif; }
+        .rekap-container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
         
-        /* RINGKASAN TOTAL ATAS */
-        .total-summary-box { text-align: center; font-size: 15px; font-weight: bold; color: #1e293b; margin-bottom: 15px; background-color: #eff6ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe; }
+        h1 { text-align: center; color: #10b981; margin-bottom: 5px; font-size: 24px; }
+        .subtitle { text-align: center; color: #64748b; margin-bottom: 25px; font-size: 14px; font-weight: 500; }
 
-        .date-picker-box { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 30px; padding: 15px; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .date-picker-box label { font-weight: 600; color: #475569; font-size: 15px; }
-        .date-input { padding: 8px 15px; border: 2px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 15px; font-weight: bold; color: #1e293b; outline: none; cursor: pointer; }
+        /* Control Panel */
+        .control-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 15px; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; gap: 15px; flex-wrap: wrap; }
+        .date-picker-box { display: flex; align-items: center; gap: 10px; font-weight: bold; color: #334155; }
+        .input-date { padding: 8px 12px; border: 2px solid #cbd5e1; border-radius: 6px; font-weight: bold; outline: none; color: #1e293b; font-family: inherit; }
+        .input-date:focus { border-color: #10b981; }
 
-        /* ACCORDION REKAP KAMAR */
-        .kamar-block { margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .kamar-header-btn { width: 100%; background-color: #ffffff; color: #1e293b; padding: 15px 20px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center; border: none; outline: none; cursor: pointer; text-align: left; }
-        .kamar-header-btn:hover { background-color: #f1f5f9; }
-        .badge-info-kamar { display: flex; align-items: center; gap: 12px; }
-        .badge-count { color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-        .arrow-icon { color: #64748b; font-size: 14px; transition: transform 0.2s ease; }
+        /* Stat Badges */
+        .stat-badges { display: flex; gap: 10px; font-size: 12px; font-weight: bold; }
+        .badge-info { padding: 6px 12px; border-radius: 20px; text-transform: uppercase; }
+        .bg-hadir { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .bg-absen { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .bg-izin { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+        /* Accordion List */
+        .kamar-accordion-container { display: flex; flex-direction: column; gap: 12px; }
+        .kamar-block { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff; }
+        
+        .kamar-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #f8fafc; cursor: pointer; transition: background-color 0.2s; user-select: none; }
+        .kamar-header:hover { background-color: #f1f5f9; }
+        .kamar-title { font-size: 16px; font-weight: 700; color: #1e293b; }
+        
+        .header-stats { display: flex; align-items: center; gap: 15px; }
+        .mini-badge { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: bold; }
+        .arrow-icon { font-size: 12px; color: #64748b; transition: transform 0.2s; }
         .kamar-block.active .arrow-icon { transform: rotate(180deg); }
-        .kamar-body { display: none; background-color: #ffffff; border-top: 1px solid #e2e8f0; }
-        .kamar-block.active .kamar-body { display: block; }
-        
-        /* TABLE STYLE */
-        .rekap-table { width: 100%; border-collapse: collapse; }
-        .rekap-table th { background-color: #f8fafc; color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; padding: 12px 20px; border-bottom: 1px solid #e2e8f0; text-align: left; }
-        .rekap-table td { padding: 12px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; }
-        .badge-status { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-        .btn-kembali { color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 14px; display: inline-block; margin-top: 20px; }
+
+        .kamar-content { display: none; padding: 20px; border-top: 1px solid #e2e8f0; background-color: #ffffff; }
+
+        /* Table Style Inside Accordion */
+        .list-table { width: 100%; border-collapse: collapse; }
+        .list-table th, .list-table td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 14px; }
+        .list-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; }
+        .badge-status { padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
+        
         <nav class="sidebar">
             <h2>Menu Utama</h2>
             <ul>
-               <li><a href="index.html">Input Absensi</a></li>
+                <li><a href="index.html">Input Absensi</a></li>
                 <li><a href="list.html">Daftar Santri</a></li>
                 <li><a href="izin1.html">Perizinan</a></li>
                 <li><a href="izin2.html">Rekap Sakit</a></li>
                 <li><a href="daftar.html">Alpha</a></li>
-                <li><a href="rekap.html">Rekap Kamar</a></li> 
+                <li><a href="rekap.html">Rekap Kamar</a></li>
                 <li><a href="history.html">Riwayat</a></li>
             </ul>
         </nav>
 
         <main class="main-content">
-            <div class="container">
-                <h2>📋 Rekap Ketidakhadiran Per Kamar</h2>
-                <p class="subtitle">Singkronisasi Data Otomatis dari Berbagai Halaman Presensi</p>
+            <div class="rekap-container">
+                <h1>📊 Rekap Presensi Per Kamar</h1>
+                <p class="subtitle">Peninjauan status komparatif seluruh kamar secara terpadu real-time</p>
 
-                <div id="totalSantriSummary" class="total-summary-box"></div>
-
-                <div class="date-picker-box">
-                    <label for="pilihanTanggal">📅 Pilih Tanggal Rekap:</label>
-                    <input type="date" id="pilihanTanggal" class="date-input" onchange="prosesDanTampilkanRekap()">
+                <div class="control-panel">
+                    <div class="date-picker-box">
+                        <label for="filterTanggalRekap">📅 Pilih Tanggal:</label>
+                        <input type="date" id="filterTanggalRekap" class="input-date" onchange="handlePerubahanTanggal()">
+                    </div>
+                    <div class="stat-badges">
+                        <div class="badge-info bg-hadir" id="grandTotalHadir">Hadir: 0</div>
+                        <div class="badge-info bg-absen" id="grandTotalAbsen">Absen: 0</div>
+                        <div class="badge-info bg-izin" id="grandTotalIzin">Izin: 0</div>
+                    </div>
                 </div>
 
-                <div id="rekapKamarKonten"></div>
-                <a href="list.html" class="btn-kembali">← Kembali ke Presensi Kamar</a>
+                <div class="kamar-accordion-container" id="rekapKamarListContainer"></div>
             </div>
         </main>
+
     </div>
 
-    <script>
-        window.onload = function() {
-            const tzoffset = (new Date()).getTimezoneOffset() * 60000;
-            const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
-            document.getElementById('pilihanTanggal').value = localISOTime;
-            
-            const namaFileAktif = window.location.pathname.split('/').pop();
-            document.querySelectorAll('.sidebar ul li a').forEach(link => {
-                if (link.getAttribute('href') === namaFileAktif) {
-                    link.classList.add('active');
-                }
-            });
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-            prosesDanTampilkanRekap();
+    <script>
+        // 1. KONFIGURASI FIREBASE (Ganti sesuai dengan kredensial Firebase Console Anda)
+        const firebaseConfig = {
+            apiKey: "RAHASIA_API_KEY_KAMU",
+            authDomain: "proyek-kamu.firebaseapp.com",
+            databaseURL: "https://proyek-kamu-default-rtdb.firebaseio.com",
+            projectId: "proyek-kamu",
+            storageBucket: "proyek-kamu.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef"
         };
 
-        function prosesDanTampilkanRekap() {
-            const kontenDiv = document.getElementById('rekapKamarKonten');
-            const summaryDiv = document.getElementById('totalSantriSummary');
-            const tanggalTerpilih = document.getElementById('pilihanTanggal').value;
-            const hariIni = new Date().toISOString().split('T')[0];
-            
-            // Ambil database master & log absensi global
-            const dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-            const dataAbsensiAsrama = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-            const dataIzin = JSON.parse(localStorage.getItem('dataIzinAsrama')) || [];
-            
-            // Tampilkan total master santri secara keseluruhan di atas halaman
-            summaryDiv.textContent = `Total Keseluruhan Santri: ${dataSantriMaster.length} Orang`;
+        // Inisialisasi Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
 
-            // Ambil data real-time hari ini milik list.html
-            const statusSantriHarian = JSON.parse(localStorage.getItem('statusSantriHarian')) || {};
+        // Variabel Cache Sinkronisasi Data Cloud
+        let dataSantriMaster = [];
+        let dataAbsensiAsrama = [];
+        let statusIzinSantriAktif = null;
 
-            if (dataSantriMaster.length === 0) {
-                kontenDiv.innerHTML = `<p style="text-align:center; color:#999; padding:40px; font-style:italic;">Belum ada data Master Santri.</p>`;
-                summaryDiv.style.display = "none";
-                return;
+        // Penampung State Accordion Terbuka/Tertutup agar tidak ter-reset ketika database update
+        let statusAccordionTerbuka = {};
+
+        // 2. AMBIL DATA REALTIME DARI FIREBASE SINKRONISASI
+        function listenFirebaseData() {
+            // Ambil Data Master Santri
+            db.ref('dataSantriMaster').on('value', (snapshot) => {
+                const val = snapshot.val();
+                dataSantriMaster = val ? Object.values(val) : [];
+                prosesDanTampilkanRekap();
+            });
+
+            // Ambil Log Riwayat Absensi (Absen/Alpha)
+            db.ref('dataAbsensiAsrama').on('value', (snapshot) => {
+                const val = snapshot.val();
+                dataAbsensiAsrama = val ? Object.values(val) : [];
+                prosesDanTampilkanRekap();
+            });
+
+            // Ambil Status Sinkronisasi Perizinan Aktif
+            db.ref('statusIzinSantriAktif').on('value', (snapshot) => {
+                statusIzinSantriAktif = snapshot.val();
+                prosesDanTampilkanRekap();
+            });
+        }
+
+        // 3. SETTING PERIODE TANGGAL DEFAULT
+        function inisialisasiTanggal() {
+            const inputTanggal = document.getElementById('filterTanggalRekap');
+            const tanggalTersimpan = localStorage.getItem('tanggalAbsenTerakhir');
+            
+            if (tanggalTersimpan) {
+                inputTanggal.value = tanggalTersimpan;
             } else {
-                summaryDiv.style.display = "block";
+                const sekarang = new Date();
+                const offset = sekarang.getTimezoneOffset();
+                const tanggalLokal = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+                inputTanggal.value = tanggalLokal;
+                localStorage.setItem('tanggalAbsenTerakhir', tanggalLokal);
+            }
+        }
+
+        function handlePerubahanTanggal() {
+            const tanggalBaru = document.getElementById('filterTanggalRekap').value;
+            localStorage.setItem('tanggalAbsenTerakhir', tanggalBaru);
+            prosesDanTampilkanRekap();
+        }
+
+        // 4. PEMERIKSAAN STATUS IZIN SINKRONISASI CLOUD
+        function cekApakahSantriIzin(namaSantri, kamarSantri, tanggalAbsenDipilih) {
+            if (!statusIzinSantriAktif) return { status: false, keterangan: "" };
+            
+            const namaClean = namaSantri.trim().toUpperCase();
+            const kamarClean = kamarSantri.trim().toUpperCase().replace("KAMAR", "").trim();
+            let dataIzin = null;
+
+            if (Array.isArray(statusIzinSantriAktif)) {
+                dataIzin = statusIzinSantriAktif.find(item => {
+                    const itemNama = (item.nama || item.namaSantri || "").trim().toUpperCase();
+                    const itemKamar = (item.kamar || item.kamarSantri || "").trim().toUpperCase().replace("KAMAR", "").trim();
+                    return itemNama === namaClean && (itemKamar === kamarClean || itemKamar === `A${kamarClean}`);
+                });
+            } else {
+                const keyIzin = `${kamarClean}_${namaClean}`;
+                dataIzin = statusIzinSantriAktif[keyIzin];
             }
 
-            const kelompokKamar = {};
-            
-            dataSantriMaster.forEach(santri => {
-                let namaKamarClean = santri.kamar ? santri.kamar.trim().toUpperCase().replace("KAMAR", "").trim() : "TANPA KAMAR";
-                if (!kelompokKamar[namaKamarClean]) {
-                    kelompokKamar[namaKamarClean] = [];
+            if (dataIzin) {
+                const tglMulai = dataIzin.tanggalMulai || dataIzin.tglMulai || dataIzin.tanggal || dataIzin.tgl_mulai || dataIzin.tgl_izin || null; 
+                const tglSelesai = dataIzin.tanggalSelesai || dataIzin.tglSelesai || dataIzin.tanggalKembali || dataIzin.tglKembali || dataIzin.tgl_selesai || dataIzin.tgl_kembali || null;
+
+                if (tglMulai && tglSelesai) {
+                    const tAbsen = new Date(tanggalAbsenDipilih);
+                    const tMulai = new Date(tglMulai);
+                    const tSelesai = new Date(tglSelesai);
+                    tAbsen.setHours(0,0,0,0); tMulai.setHours(0,0,0,0); tSelesai.setHours(0,0,0,0);
+
+                    if (tAbsen < tMulai || tAbsen > tSelesai) { return { status: false, keterangan: "" }; }
                 }
+                return { status: true, keterangan: dataIzin.keterangan || "Izin" };
+            }
+            return { status: false, keterangan: "" };
+        }
+
+        // 5. INTI LOGIKA PEMROSESAN DAN STRUKTURISASI DATA REKAP
+        function prosesDanTampilkanRekap() {
+            const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
+            const kontenDiv = document.getElementById('rekapKamarListContainer');
+
+            // Susun 13 Kamar Utama (A1 s/d A13)
+            const rekapKamarData = {};
+            for (let i = 1; i <= 13; i++) {
+                rekapKamarData[`A${i}`] = {
+                    namaKamar: `A${i}`,
+                    countHadir: 0,
+                    countAbsen: 0,
+                    countIzin: 0,
+                    santriList: []
+                };
+            }
+
+            // Variabel Penampung Akumulasi Total Seluruh Kamar
+            let grandHadir = 0, grandAbsen = 0, grandIzin = 0;
+
+            // Mapping Status Kamar Santri
+            dataSantriMaster.forEach(santri => {
+                if (!santri.kamar) return;
                 
-                const namaSantriClean = santri.nama.trim().toLowerCase();
+                const kClean = santri.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                const keyKamar = kClean.startsWith('A') ? kClean : `A${kClean}`;
+
+                // Jika terdeteksi di luar jangkauan A1 - A13, bypass
+                if (!rekapKamarData[keyKamar]) return;
+
+                const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+
+                // A. Cek Status Izin Terlebih Dahulu
+                const hasilCekIzin = cekApakahSantriIzin(santri.nama, keyKamar, tanggalTerpilih);
                 
-                // 1. CEK DATA DARI DAFTAR.HTML / DATABASE PERMANEN
-                const recordAbsensi = dataAbsensiAsrama.find(item => {
-                    const itemNama = item.nama || "";
-                    const itemKamar = item.kamar || "";
-                    let itemTanggal = item.tanggal || "";
-                    if (itemTanggal.includes('T')) itemTanggal = itemTanggal.split('T')[0];
-                    
-                    return itemNama.trim().toLowerCase() === namaSantriClean && 
-                           itemKamar.trim().toUpperCase().replace("KAMAR", "").trim() === namaKamarClean && 
-                           itemTanggal.trim() === tanggalTerpilih;
-                });
-
-                // 2. CEK DATA REAL-TIME HARI INI DARI LIST.HTML
-                const keyStatusListHTML = `${namaKamarClean}_${namaSantriClean}`;
-                const statusDariListHTML = statusSantriHarian[keyStatusListHTML];
-
-                // 3. CEK KONDISI IZIN AKTIF (Perbaikan Validasi Menggunakan Rentang Tanggal Objek Hari)
-                const sedangIzin = dataIzin.find(item => {
-                    if (item.nama.trim().toLowerCase() !== namaSantriClean) return false;
-                    
-                    // Membuat batas deteksi objek tanggal mulai dan tanggal habis (mengabaikan jam spesifik)
-                    const tglMulaiFormat = new Date(item.waktuMulai).toISOString().split('T')[0];
-                    const tglHabisFormat = new Date(item.waktuHabis).toISOString().split('T')[0];
-                    
-                    // Santri dianggap berstatus izin jika tanggal rekap berada di dalam rentang izin aktifnya
-                    return tanggalTerpilih >= tglMulaiFormat && tanggalTerpilih <= tglHabisFormat;
-                });
-
-                // PENENTUAN STATUS AKHIR (SINKRONISASI KEDUA HALAMAN)
                 let statusFinal = "Hadir";
-                
-                if (sedangIzin) {
+                if (hasilCekIzin.status) {
                     statusFinal = "Izin";
-                } else if (tanggalTerpilih === hariIni && statusDariListHTML === "absen") {
-                    statusFinal = "Absen"; // Prioritas data klik langsung dari list.html jika hari ini
-                } else if (recordAbsensi) {
-                    const st = recordAbsensi.status.trim().toLowerCase();
-                    if (st === "absen" || st === "alpha" || st === "tidak hadir") {
+                } else {
+                    // B. Jika tidak Izin, Cek log Alpha di dataAbsensiAsrama
+                    const adaDiLogAbsen = dataAbsensiAsrama.some(item => {
+                        let tglItem = item.tanggal || "";
+                        if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+                        const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                        const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                        return nLog === namaSantriClean && kLog === kClean && tglItem === tanggalTerpilih;
+                    });
+
+                    if (adaDiLogAbsen) {
                         statusFinal = "Absen";
-                    } else if (st === "izin" || st === "sakit") {
-                        statusFinal = "Izin";
                     }
                 }
 
-                kelompokKamar[namaKamarClean].push({
+                // Kalkulasi Stat Per Kamar & Global
+                if (statusFinal === "Hadir") { rekapKamarData[keyKamar].countHadir++; grandHadir++; }
+                if (statusFinal === "Absen") { rekapKamarData[keyKamar].countAbsen++; grandAbsen++; }
+                if (statusFinal === "Izin")  { rekapKamarData[keyKamar].countIzin++;  grandIzin++; }
+
+                rekapKamarData[keyKamar].santriList.push({
                     nama: santri.nama.trim().toUpperCase(),
                     status: statusFinal
                 });
             });
 
+            // Update Tampilan Total Akumulasi Top Panel
+            document.getElementById('grandTotalHadir').textContent = `Hadir: ${grandHadir}`;
+            document.getElementById('grandTotalAbsen').textContent = `Absen: ${grandAbsen}`;
+            document.getElementById('grandTotalIzin').textContent = `Izin: ${grandIzin}`;
+
+            // 6. RENDER DATA COMPONENT ACCORDION KE DOM HTML
             let htmlFinal = "";
-            const listKamarTerurut = Object.keys(kelompokKamar).sort((a, b) => {
-                return (parseInt(a.replace(/[^\d]/g, '')) || 0) - (parseInt(b.replace(/[^\d]/g, '')) || 0);
-            });
 
-            listKamarTerurut.forEach(kamar => {
-                const dataKamar = kelompokKamar[kamar];
-                dataKamar.sort((a, b) => a.nama.localeCompare(b.nama));
+            Object.values(rekapKamarData).forEach(kamar => {
+                // Urutkan nama santri di dalam kamar secara Alphabetical A-Z
+                kamar.santriList.sort((a, b) => a.nama.localeCompare(b.nama));
 
-                const totalSantriKamar = dataKamar.length; // Perhitungan jumlah santri di kamar ini
-                const totalAbsen = dataKamar.filter(s => s.status === "Absen").length;
-                const totalIzin = dataKamar.filter(s => s.status === "Izin").length;
-                const totalHadir = dataKamar.filter(s => s.status === "Hadir").length;
+                const kId = kamar.namaKamar;
+                const isTerbuka = statusAccordionTerbuka[kId] ? "active" : "";
+                const displayStyle = statusAccordionTerbuka[kId] ? "block" : "none";
+
+                let rowsSantriHTML = "";
+                if (kamar.santriList.length === 0) {
+                    rowsSantriHTML = `<tr><td colspan="3" style="text-align:center; color:#aaa; font-style:italic; padding:20px;">Belum ada data santri di kamar ini.</td></tr>`;
+                } else {
+                    kamar.santriList.forEach((santri, index) => {
+                        let warnaBadge = "background-color: #dcfce7; color: #166534;";
+                        if (santri.status === "Absen") warnaBadge = "background-color: #fee2e2; color: #991b1b;";
+                        if (santri.status === "Izin") warnaBadge = "background-color: #fef3c7; color: #92400e;";
+
+                        rowsSantriHTML += `
+                            <tr>
+                                <td style="text-align: center; color: #64748b; font-weight: 600; width: 50px;">${index + 1}</td>
+                                <td><span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span></td>
+                                <td style="text-align: center; width: 130px;">
+                                    <span class="badge-status" style="${warnaBadge}">${santri.status.toUpperCase()}</span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
 
                 htmlFinal += `
-                    <div class="kamar-block" id="block_${kamar}">
-                        <button class="kamar-header-btn" onclick="toggleDropdownKamar('${kamar}')">
-                            <span>🚪 KAMAR ${kamar} <span style="font-size:13px; color:#475569; font-weight:normal; margin-left:5px;">(${totalSantriKamar} Santri)</span></span>
-                            <div class="badge-info-kamar">
-                                <span style="font-size:12px; color:#64748b; font-weight:600;">
-                                    (H: ${totalHadir} | A: ${totalAbsen} ${totalIzin > 0 ? `| I: ${totalIzin}` : ''})
-                                </span>
-                                <span class="badge-count" style="background-color: ${totalAbsen > 0 ? '#ef4444' : '#10b981'}">
-                                    ${totalAbsen} Absen
-                                </span>
+                    <div class="kamar-block ${isTerbuka}" id="block_${kId}">
+                        <div class="kamar-header" onclick="toggleDropdownKamar('${kId}')">
+                            <span class="kamar-title">🚪 KAMAR ${kId}</span>
+                            <div class="header-stats">
+                                <span class="mini-badge bg-hadir">${kamar.countHadir} H</span>
+                                <span class="mini-badge bg-absen">${kamar.countAbsen} A</span>
+                                <span class="mini-badge bg-izin">${kamar.countIzin} I</span>
                                 <span class="arrow-icon">▼</span>
                             </div>
-                        </button>
-                        <div class="kamar-body">
-                            <table class="rekap-table">
+                        </div>
+                        <div class="kamar-content" id="content_${kId}" style="display: ${displayStyle};">
+                            <table class="list-table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 50px; text-align: center;">No</th>
-                                        <th>Nama Lengkap Santri</th>
-                                        <th style="text-align: center; width: 140px;">Status Presensi</th>
+                                        <th style="text-align: center;">No</th>
+                                        <th>Nama Lengkap</th>
+                                        <th style="text-align: center;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    ${rowsSantriHTML}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 `;
-
-                dataKamar.forEach((santri, index) => {
-                    let warnaBadge = "background-color: #dcfce7; color: #166534;";
-                    if (santri.status === "Absen") warnaBadge = "background-color: #fee2e2; color: #991b1b;";
-                    if (santri.status === "Izin") warnaBadge = "background-color: #fef3c7; color: #92400e;";
-
-                    htmlFinal += `
-                        <tr>
-                            <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
-                            <td><span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span></td>
-                            <td style="text-align: center;">
-                                <span class="badge-status" style="${warnaBadge}">${santri.status.toUpperCase()}</span>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                htmlFinal += `</tbody></table></div></div>`;
             });
 
-            kontenDiv.innerHTML = htmlFinal || `<p style="text-align:center; color:#999; padding:40px;">Tidak ada data.</p>`;
+            kontenDiv.innerHTML = htmlFinal;
         }
 
+        // 7. FUNGSI KONTROL INTERAKSI ACCORDION DROPDOWN
         function toggleDropdownKamar(kamarId) {
             const elemenBlock = document.getElementById(`block_${kamarId}`);
-            if(elemenBlock) elemenBlock.classList.toggle('active');
+            const elemenContent = document.getElementById(`content_${kamarId}`);
+
+            if (elemenBlock.classList.contains('active')) {
+                elemenBlock.classList.remove('active');
+                elemenContent.style.display = "none";
+                statusAccordionTerbuka[kamarId] = false; // Catat state tertutup
+            } else {
+                elemenBlock.classList.add('active');
+                elemenContent.style.display = "block";
+                statusAccordionTerbuka[kamarId] = true;  // Catat state terbuka
+            }
         }
+
+        // 8. HIGHLIGHT MENU UTAMA SIDEBAR AKTIF AUTOMATION
+        document.querySelectorAll('.sidebar ul li a').forEach(link => link.classList.remove('active'));
+        const namaFileAktif = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.sidebar ul li a').forEach(link => {
+            const hrefTautan = link.getAttribute('href');
+            if (namaFileAktif === hrefTautan || (namaFileAktif === '' && hrefTautan === 'index.html')) {
+                link.classList.add('active');
+            }
+        });
+
+        // RUNNING AWAL SAAT BROWSER SELESAI LOAD HALAMAN
+        window.onload = function() {
+            inisialisasiTanggal();
+            listenFirebaseData();
+        };
     </script>
 </body>
-</html>()
+</html>
