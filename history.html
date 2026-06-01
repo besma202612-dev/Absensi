@@ -58,7 +58,6 @@
             padding-left: 35px;
         }
 
-        /* Penanda halaman aktif diganti ke menu Riwayat / History */
         .sidebar ul li a.active {
             background-color: #3b82f6;
             color: white;
@@ -67,151 +66,146 @@
 
         /* ==================== AREA KONTEN UTAMA ==================== */
         .main-content {
-            margin-left: 250px; /* Ruang agar konten tidak tertutup sidebar */
+            margin-left: 250px;
             flex: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .history-box {
+            background-color: #ffffff;
             padding: 30px;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: #333;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 1000px;
         }
 
-        .container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            background-color: #ffffff; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+        .history-box h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 24px;
         }
-        
-        .container h2 { text-align: center; color: #0284c7; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
-        
-        .filter-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f0f2f5; }
-        .btn-filter { padding: 8px 16px; border: 1px solid #0284c7; background-color: #fff; color: #0284c7; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
-        .btn-filter.active, .btn-filter:hover { background-color: #0284c7; color: #fff; }
-        
-        .table-header-control { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        .kamar-title { font-size: 18px; color: #1e293b; margin: 0; font-weight: bold; }
 
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: 12px 15px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
-        th { background-color: #fef3c7; color: #1e293b; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
-        
-        /* Style Tombol Edit Nama Custom */
-        .btn-edit-nama { background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 8px; font-weight: 600; transition: all 0.2s; }
-        .btn-edit-nama:hover { background-color: #e5e7eb; color: #1f2937; }
+        /* PANEL ATAS & ACTION */
+        .panel-kontrol {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
 
-        /* ==================== DROPDOWN ACCORDION ==================== */
-        .btn-toggle-list {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
+        .btn-hapus-semua {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
             font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            font-size: 14px;
+            cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-toggle-list:hover {
-            background-color: #bae6fd;
+
+        .btn-hapus-semua:hover {
+            background-color: #b91c1c;
         }
 
-        .dropdown-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            padding-left: 5px;
-        }
-
-        /* Kelas pemicu via JS untuk membuka dropdown */
-        .dropdown-content.open {
-            max-height: 1200px; /* Nilai besar agar menampung banyak data */
-            transition: max-height 0.5s ease-in;
-        }
-
-        .history-item-block {
-            padding: 12px 0;
-            border-bottom: 1px dashed #cbd5e1;
-        }
-        .history-item-block:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .text-alasan { display: block; font-size: 12px; color: #0369a1; font-weight: 500; margin-top: 6px; background-color: #f0f9ff; padding: 4px 8px; border-radius: 4px; border-left: 3px solid #0284c7; width: fit-content; }
-        .text-selesai { font-size: 11px; color: #059669; font-weight: bold; margin-top: 4px; display: block; }
-
-        .btn-hapus-history { background-color: #fee2e2; color: #ef4444; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 11px; transition: all 0.2s; margin-top: 5px; }
-        .btn-hapus-history:hover { background-color: #ef4444; color: white; }
-
-        .btn-aksi-container { display: flex; justify-content: space-between; margin-top: 25px; align-items: center; }
-        .btn-kembali { color: #d97706; text-decoration: none; font-weight: 600; font-size: 14px; }
-        .btn-clear-all { background-color: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.2s; }
-        .btn-clear-all:hover { background-color: #dc2626; }
-
-        /* ==================== STYLE DIALOG MODAL FORM ==================== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-box {
-            background-color: #ffffff;
+        /* STYLE TABEL */
+        .history-table {
             width: 100%;
-            max-width: 420px;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
+            border-collapse: collapse;
+            margin-top: 10px;
         }
 
-        .modal-overlay.show .modal-box {
-            transform: scale(1);
+        .history-table th, .history-table td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .modal-box h3 {
-            color: #0284c7;
-            margin-bottom: 15px;
-            font-size: 18px;
-            border-bottom: 2px solid #e0f2fe;
-            padding-bottom: 10px;
+        .history-table th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            font-size: 14px;
         }
 
-        .modal-group { margin-bottom: 18px; }
-        .modal-group label { display: block; font-size: 13px; font-weight: 600; color: #4b5563; margin-bottom: 6px; }
-        .modal-group input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; text-transform: uppercase; }
-        .modal-group input:focus { border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+        .history-table tr:hover {
+            background-color: #f8fafc;
+        }
 
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
-        .btn-modal-cancel { padding: 8px 16px; background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
-        .btn-modal-cancel:hover { background-color: #e2e8f0; }
-        .btn-modal-submit { padding: 8px 16px; background-color: #0284c7; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        .btn-modal-submit:hover { background-color: #0369a1; }
+        .badge-status-selesai {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .btn-aksi-hapus {
+            background-color: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #fecdd3;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-aksi-hapus:hover {
+            background-color: #ffe4e6;
+            color: #be123c;
+        }
+
+        /* DROPDOWN KETERANGAN */
+        .btn-dropdown {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-dropdown:hover {
+            color: #1e293b;
+        }
+
+        .btn-dropdown .panah {
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .btn-dropdown.active .panah {
+            transform: rotate(180deg);
+        }
+
+        .row-detail {
+            display: none;
+            background-color: #f8fafc;
+        }
+
+        .box-detail {
+            padding: 15px;
+            border-left: 4px solid #cbd5e1;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        
         <nav class="sidebar">
             <h2>Menu Utama</h2>
             <ul>
@@ -220,261 +214,162 @@
                 <li><a href="izin1.html">Perizinan</a></li>
                 <li><a href="izin2.html">Rekap Sakit</a></li>
                 <li><a href="daftar.html">Alpha</a></li>
-                <li><a href="rekap.html">Rekap Kamar</a></li> 
-                <li><a href="history.html" class="active">Riwayat</a></li>
+                <li><a href="rekap.html">Rekap Kamar</a></li>
+                <li><a href="history.html">Riwayat</a></li>
             </ul>
         </nav>
 
         <main class="main-content">
-            <div class="container">
-                <h2>Riwayat / History Perizinan Asrama</h2>
-                <p class="subtitle">Daftar keseluruhan izin yang telah selesai atau dihapus</p>
-
-                <div class="filter-container" id="filterContainer">
-                    <button class="btn-filter active" onclick="pilihFilter('Semua', this)">Semua Kamar</button>
+            <div class="history-box">
+                <h1>📋 Riwayat / History Perizinan Santri</h1>
+                
+                <div class="panel-kontrol">
+                    <button class="btn-hapus-semua" onclick="hapusSemuaRiwayat()">🗑️ Hapus Semua Riwayat</button>
                 </div>
 
-                <div class="table-header-control">
-                    <h3 class="kamar-title" id="currentKamarView">Semua Kamar</h3>
-                </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 15%;">Kamar</th>
-                                <th style="width: 35%;">Nama Lengkap</th>
-                                <th style="width: 50%;">List Riwayat Perizinan</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelHistoryBody"></tbody>
-                    </table>
-                </div>
-
-                <div class="btn-aksi-container">
-                    <a href="izin1.html" class="btn-kembali">← Kembali ke Rekap Aktif</a>
-                    <button class="btn-clear-all" onclick="hapusSemuaRiwayat()">🗑️ Bersihkan Semua Riwayat</button>
-                </div>
+                <div id="containerTabelHistory">
+                    </div>
             </div>
         </main>
     </div>
 
-    <div class="modal-overlay" id="modalUbahNama">
-        <div class="modal-box">
-            <h3>📝 Form Ubah Nama Anak (Riwayat)</h3>
-            <div class="modal-group">
-                <label>Kamar Asrama</label>
-                <input type="text" id="modalKamar" disabled style="background-color: #f1f5f9; color: #64748b; font-weight: bold;">
-            </div>
-            <div class="modal-group">
-                <label for="modalNamaInput">Nama Lengkap Baru</label>
-                <input type="text" id="modalNamaInput" placeholder="Masukkan nama baru..." autocomplete="off">
-            </div>
-            <div class="modal-buttons">
-                <button class="btn-modal-cancel" onclick="tutupFormModal()">Batal</button>
-                <button class="btn-modal-submit" onclick="eksekusiSimpanNama()">Simpan Perubahan</button>
-            </div>
-        </div>
-    </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    let filterSekarang = 'Semua';
-    let namaLamaDipilih = "";
-    let kamarDipilih = "";
+    // Konfigurasi Firebase Realtime Database
+    const firebaseConfig = {
+        apiKey: "AIzaSyBxA...",
+        authDomain: "absensi-besma.firebaseapp.com",
+        databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "absensi-besma",
+        storageBucket: "absensi-besma.appspot.com",
+        messagingSenderId: "1234567890",
+        appId: "1:12345678:web:abcd1234"
+    };
+    
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    // Membuat tombol filter Kamar A1-A13 secara otomatis
-    const filterContainer = document.getElementById('filterContainer');
-    for (let i = 1; i <= 13; i++) {
-        const namaKamar = `A${i}`;
-        const btn = document.createElement('button');
-        btn.className = 'btn-filter'; 
-        btn.textContent = namaKamar;
-        btn.onclick = function() { pilihFilter(namaKamar, btn); };
-        filterContainer.appendChild(btn);
-    }
+    // Penampung data global yang tersinkronisasi dengan Firebase cloud
+    let globalDataHistory = [];
 
-    function pilihFilter(kamar, elemenTombol) {
-        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-        elemenTombol.classList.add('active');
-        filterSekarang = kamar;
-        tampilkanHistory();
-    }
+    // Mengambil data dari Firebase cloud secara real-time
+    db.ref('riwayatIzinAsrama').on('value', (snapshot) => {
+        globalDataHistory = snapshot.val() || [];
+        tampilkanHistory(); // Jalankan render tabel otomatis saat data berubah di cloud
+    });
 
+    // ==================== MAIN CORE FUNCTION DATA ====================
     function tampilkanHistory() {
-        const tabelBody = document.getElementById('tabelHistoryBody');
-        const currentKamarView = document.getElementById('currentKamarView');
-        
-        currentKamarView.textContent = ` ${filterSekarang === 'Semua' ? 'Semua Kamar' : 'Kamar ' + filterSekarang}`;
-        tabelBody.innerHTML = '';
+        const container = document.getElementById('containerTabelHistory');
 
-        const dataHistory = JSON.parse(localStorage.getItem('riwayatIzinAsrama')) || [];
-        const dataDifilter = filterSekarang === 'Semua' ? dataHistory : dataHistory.filter(item => item.kamar === filterSekarang);
-
-        if (dataDifilter.length === 0) {
-            tabelBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999; padding:30px;">Tidak ada data riwayat untuk kamar ini.</td></tr>`;
+        if (globalDataHistory.length === 0) {
+            container.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:40px; font-style:italic; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">Belum ada catatan riwayat perizinan yang diarsipkan.</p>`;
             return;
         }
 
-        // PROSES REKAP/PENGELOMPOKAN DATA BERDASARKAN NAMA & KAMAR
-        const petaRekap = {};
-        dataDifilter.forEach(item => {
-            const keyUnik = `${item.nama.trim().toUpperCase()}_${item.kamar}`;
-            if (!petaRekap[keyUnik]) {
-                petaRekap[keyUnik] = {
-                    nama: item.nama,
-                    kamar: item.kamar,
-                    listIzin: []
-                };
-            }
-            petaRekap[keyUnik].listIzin.push(item);
-        });
+        // Menyalin array data agar pengurutan tidak merusak data asli
+        const historyDiurutkan = [...globalDataHistory].sort((a, b) => Number(b.waktuMulai) - Number(a.waktuMulai));
 
-        const arrayRekap = Object.values(petaRekap);
-        arrayRekap.sort((a, b) => a.nama.localeCompare(b.nama));
+        let htmlTabel = `
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">No</th>
+                        <th>Kamar</th>
+                        <th>Nama Santri</th>
+                        <th>Durasi Rencana</th>
+                        <th style="text-align: center;">Status Akhir</th>
+                        <th>Keterangan Lengkap</th>
+                        <th style="width: 100px; text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
 
-        arrayRekap.forEach((user, indeks) => {
-            const tr = document.createElement('tr');
-            user.listIzin.sort((a, b) => b.waktuSelesaiNyata - a.waktuSelesaiNyata);
+        historyDiurutkan.forEach((item, index) => {
+            const idDropdown = `detail_hist_${index}`;
+            
+            const teksStatusAkhir = item.statusCatatanAkhir ? item.statusCatatanAkhir : "Selesai Sesuai Waktu";
+            const warnaBadgeStatus = item.statusColor ? item.statusColor : "#166534";
+            const warnaLatarStatus = item.statusColor ? item.statusColor + "1a" : "#dcfce7";
 
-            let htmlListIzin = '';
-            user.listIzin.forEach(izin => {
-                const opsiWaktu = { hour: '2-digit', minute: '2-digit' };
-                const tglMulai = new Date(izin.waktuMulai).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'});
-                const jamMulai = new Date(izin.waktuMulai).toLocaleTimeString('id-ID', opsiWaktu);
-                
-                const tglSelesai = new Date(izin.waktuSelesaiNyata).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
-                const jamSelesai = new Date(izin.waktuSelesaiNyata).toLocaleTimeString('id-ID', opsiWaktu);
+            const dMulai = new Date(item.waktuMulai);
+            const dHabis = new Date(item.waktuHabis);
+            const tglSelesaiArsip = item.waktuKembaliKembali ? new Date(item.waktuKembaliKembali) : dHabis;
 
-                // --- SISTEM DETEKSI WARNA STATUS ---
-                const teksStatus = izin.statusSelesai || 'Selesai';
-                let warnaTeksStatus = '#64748b'; 
+            const formatWaktuMulai = `${dMulai.getDate()}/${dMulai.getMonth()+1} ${String(dMulai.getHours()).padStart(2,'0')}:${String(dMulai.getMinutes()).padStart(2,'0')}`;
+            const formatWaktuHabis = `${dHabis.getDate()}/${dHabis.getMonth()+1} ${String(dHabis.getHours()).padStart(2,'0')}:${String(dHabis.getMinutes()).padStart(2,'0')}`;
+            const formatWaktuAktifKembali = `${tglSelesaiArsip.getDate()}/${tglSelesaiArsip.getMonth()+1} ${String(tglSelesaiArsip.getHours()).padStart(2,'0')}:${String(tglSelesaiArsip.getMinutes()).padStart(2,'0')}`;
 
-                if (teksStatus.includes('Otomatis')) {
-                    warnaTeksStatus = '#ef4444'; 
-                }
-
-                htmlListIzin += `
-                    <div class="history-item-block">
-                        <div>📅 Mulai: ${tglMulai} (${jamMulai}) | Durasi Berjalan: <strong>${izin.durasiTeks || '-'}</strong></div>
-                        <span class="text-alasan">📝 Alasan: "${izin.keterangan || '-'}"</span>
-                        <span class="text-selesai">✅ Selesai pada: ${tglSelesai} pukul ${jamSelesai}</span>
-                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 4px;">
-                            <span style="font-size: 11px; color: ${warnaTeksStatus}; font-weight: 600;">ℹ️ Keterangan: <em>${teksStatus}</em></span>
-                            <button class="btn-hapus-history" onclick="hapusHistorySatuPerSatu('${izin.waktuMulai}', '${user.nama}')">Hapus Log Ini</button>
+            htmlTabel += `
+                <tr>
+                    <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
+                    <td style="font-weight: 600; color: #334155;">KAMAR ${item.kamar}</td>
+                    <td style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${item.nama}</td>
+                    <td style="font-size: 13px; color: #475569;">${item.durasiTeks}</td>
+                    <td style="text-align: center;">
+                        <span class="badge-status-selesai" style="color: ${warnaBadgeStatus}; background-color: ${warnaLatarStatus}; border: 1px solid ${warnaBadgeStatus}33;">
+                            ${teksStatusAkhir}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-dropdown" onclick="toggleDropdown('${idDropdown}', this)">
+                            📄 Detail Log <span class="panah">▼</span>
+                        </button>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-aksi-hapus" onclick="hapusHistorySatuPerSatu('${item.waktuMulai}', '${item.nama.replace(/'/g, "\\'")}')">
+                            🗑️ Hapus
+                        </button>
+                    </td>
+                </tr>
+                <tr id="${idDropdown}" class="row-detail">
+                    <td colspan="7">
+                        <div class="box-detail">
+                            <strong>🕒 Jadwal Rencana Izin:</strong> ${formatWaktuMulai} s/d ${formatWaktuHabis}<br>
+                            <strong>📥 Waktu Masuk/Arsip Aktual:</strong> ${formatWaktuAktifKembali}<br>
+                            <strong>👤 Pengurus Penanggung Jawab:</strong> ${item.pengurus ? item.pengurus : '-'}<br>
+                            <strong>📝 Alasan/Keterangan Izin:</strong> ${item.keterangan ? item.keterangan : 'Tidak ada catatan khusus.'}
                         </div>
-                    </div>
-                `;
-            });
-
-            const idDropdown = `drop_${indeks}`;
-
-            tr.innerHTML = `
-                <td style="vertical-align: top; padding-top: 15px;"><span style="font-weight:600; color:#0284c7;">${user.kamar}</span></td>
-                <td style="vertical-align: top; padding-top: 15px;">
-                    <strong>${user.nama}</strong>
-                    <button class="btn-edit-nama" onclick="bukaFormModal('${user.nama}', '${user.kamar}')">✏️ Edit</button>
-                </td>
-                <td style="vertical-align: top; padding-top: 12px;">
-                    <button class="btn-toggle-list" onclick="toggleDropdown('${idDropdown}', this)">
-                        <span>Lihat Riwayat (${user.listIzin.length})</span> <span>▼</span>
-                    </button>
-                    
-                    <div id="${idDropdown}" class="dropdown-content">
-                        ${htmlListIzin}
-                    </div>
-                </td>
+                    </td>
+                </tr>
             `;
-            tabelBody.appendChild(tr);
         });
+
+        htmlTabel += `</tbody></table>`;
+        container.innerHTML = htmlTabel;
     }
 
-    /* ==================== FUNGSI KONTROL DROPDOWN ACCORDION ==================== */
-    function toggleDropdown(idTarget, elemenTombol) {
-        const konten = document.getElementById(idTarget);
-        const ikonPanah = elemenTombol.querySelectorAll('span')[1];
-
-        if (konten.classList.contains('open')) {
-            konten.classList.remove('open');
-            ikonPanah.textContent = '▼';
-            elemenTombol.style.backgroundColor = '#e0f2fe'; 
-        } else {
-            konten.classList.add('open');
-            ikonPanah.textContent = '▲';
-            elemenTombol.style.backgroundColor = '#bae6fd'; 
-        }
-    }
-
-    /* ==================== FUNGSI MODAL FORM EDIT NAMA ==================== */
-    function bukaFormModal(namaLama, kamar) {
-        namaLamaDipilih = namaLama;
-        kamarDipilih = kamar;
-        document.getElementById('modalKamar').value = "KAMAR " + kamar;
-        document.getElementById('modalNamaInput').value = namaLama;
-        const modal = document.getElementById('modalUbahNama');
-        modal.classList.add('show');
-        setTimeout(() => { document.getElementById('modalNamaInput').focus(); }, 100);
-    }
-
-    function tutupFormModal() {
-        document.getElementById('modalUbahNama').classList.remove('show');
-        namaLamaDipilih = "";
-        kamarDipilih = "";
-    }
-
-    function eksekusiSimpanNama() {
-        let namaBaru = document.getElementById('modalNamaInput').value;
-        if (!namaBaru) { alert("Gagal: Nama baru tidak boleh kosong!"); return; }
-        namaBaru = namaBaru.trim().toUpperCase();
-
-        if (namaBaru === namaLamaDipilih.toUpperCase()) { tutupFormModal(); return; }
-
-        let dataHistory = JSON.parse(localStorage.getItem('riwayatIzinAsrama')) || [];
-        const apakahNamaSudahAda = dataHistory.some(item => item.nama.toUpperCase() === namaBaru && item.kamar === kamarDipilih);
-
-        if (apakahNamaSudahAda) {
-            if (confirm(`Nama "${namaBaru}" sudah ada di riwayat Kamar ${kamarDipilih}.\n\nApakah Anda ingin MENGGABUNGKAN seluruh list riwayat perizinan mereka secara otomatis?`)) {
-                dataHistory = dataHistory.map(item => {
-                    if (item.nama.toLowerCase() === namaLamaDipilih.toLowerCase() && item.kamar === kamarDipilih) { item.nama = namaBaru; }
-                    return item;
-                });
-                alert(`Seluruh list data riwayat berhasil digabungkan ke nama "${namaBaru}"!`);
-            } else { return; }
-        } else {
-            dataHistory = dataHistory.map(item => {
-                if (item.nama.toLowerCase() === namaLamaDipilih.toLowerCase() && item.kamar === kamarDipilih) { item.nama = namaBaru; }
-                return item;
-            });
-            alert("Nama berhasil diperbarui pada riwayat!");
-        }
-
-        localStorage.setItem('riwayatIzinAsrama', JSON.stringify(dataHistory));
-        tutupFormModal();
-        tampilkanHistory();
-    }
-
-    document.getElementById('modalNamaInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') { eksekusiSimpanNama(); }
-    });
-
-    /* ==================== CLEAN UP / HAPUS LOG DATA ==================== */
     function hapusHistorySatuPerSatu(waktuMulai, nama) {
         if (confirm(`Hapus catatan riwayat untuk ${nama}? Tindakan ini tidak bisa dibatalkan.`)) {
-            let dataHistory = JSON.parse(localStorage.getItem('riwayatIzinAsrama')) || [];
-            dataHistory = dataHistory.filter(item => !(String(item.waktuMulai) === String(waktuMulai) && item.nama === nama));
-            localStorage.setItem('riwayatIzinAsrama', JSON.stringify(dataHistory));
-            tampilkanHistory();
+            // Memfilter array data global untuk mengecualikan item yang dihapus
+            const dataTerupdate = globalDataHistory.filter(item => !(String(item.waktuMulai) === String(waktuMulai) && item.nama === nama));
+            
+            // Perbarui array data terbaru langsung ke Firebase cloud
+            db.ref('riwayatIzinAsrama').set(dataTerupdate);
+        }
+    }
+
+    function toggleDropdown(id, element) {
+        const detailRow = document.getElementById(id);
+        if (detailRow.style.display === "table-row") { 
+            detailRow.style.display = "none"; 
+            element.classList.remove("active"); 
+        } else { 
+            detailRow.style.display = "table-row"; 
+            element.classList.add("active"); 
         }
     }
 
     function hapusSemuaRiwayat() {
         if (confirm("Apakah Anda yakin ingin MENGHAPUS SEMUA data riwayat secara permanen?")) {
-            localStorage.removeItem('riwayatIzinAsrama');
-            tampilkanHistory();
+            // Membersihkan node riwayatIzinAsrama di Firebase cloud
+            db.ref('riwayatIzinAsrama').remove();
         }
     }
-
-    // Eksekusi fungsi utama saat halaman dimuat
-    tampilkanHistory();
 
     // ==================== REPARASI NAVIGATOR SIDEBAR AKTIF ====================
     document.querySelectorAll('.sidebar ul li a').forEach(link => { link.classList.remove('active'); });
