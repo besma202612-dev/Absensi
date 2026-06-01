@@ -142,15 +142,15 @@
     <div class="app-container">
         <nav class="sidebar">
             <h2>Menu Utama</h2>
-            <ul>
-                <li><a href="index.html">Input Absensi</a></li>
-                <li><a href="list.html">Daftar Santri</a></li>
-                <li><a href="izin1.html">Perizinan</a></li>
-                <li><a href="izin2.html">Rekap Sakit</a></li>
-                <li><a href="daftar.html">Alpha</a></li>
-                <li><a href="rekap.html">Rekap Kamar</a></li>
-                <li><a href="history.html">Riwayat</a></li>
-            </ul>
+           <ul>
+    <li><a href="index.html">📝 Form Absensi</a></li>
+    <li><a href="list.html">🚪 Daftar Santri</a></li>
+    <li><a href="daftar.html">📋 Rekap Absen</a></li>
+    <li><a href="rekap.html">📊 Rekap Per Kamar</a></li>
+    <li><a href="izin1.html">📝 Daftar Perizinan</a></li>
+    <li><a href="history.html">📜 Riwayat Perizinan</a></li>
+    <li><a href="izin2.html">🏥 Riwayat Sakit</a></li>
+</ul>
         </nav>
 
         <main class="main-content">
@@ -196,14 +196,15 @@
 <script>
     // Konfigurasi Firebase Realtime Database Anda
     const firebaseConfig = {
-        apiKey: "AIzaSyBxA...",
-        authDomain: "absensi-besma.firebaseapp.com",
-        databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "absensi-besma",
-        storageBucket: "absensi-besma.appspot.com",
-        messagingSenderId: "1234567890",
-        appId: "1:12345678:web:abcd1234"
-    };
+  apiKey: "AIzaSyDIxABuKyV-Yz6QkjTBEoj-tZUlqZFLt1s",
+  authDomain: "absensi-besma.firebaseapp.com",
+  databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "absensi-besma",
+  storageBucket: "absensi-besma.firebasestorage.app",
+  messagingSenderId: "903515270638",
+  appId: "1:903515270638:web:ba7bd2faa90674ccf6b2ff",
+  measurementId: "G-398MW34FYK"
+};
     
     // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
@@ -271,12 +272,12 @@
         }
     }
 
-    // ==================== REPARASI NAVIGATOR SIDEBAR AKTIF ====================
+    // ==================== SAMAKAN LOGIKA NAVIGASI DARI IZIN1.HTML ====================
+    document.querySelectorAll('.sidebar ul li a').forEach(link => link.classList.remove('active'));
     const namaFileAktif = window.location.pathname.split('/').pop();
     document.querySelectorAll('.sidebar ul li a').forEach(link => {
-        link.classList.remove('active');
         const hrefTautan = link.getAttribute('href');
-        if (namaFileAktif === hrefTautan || ((namaFileAktif === '' || namaFileAktif === 'index.html') && hrefTautan === 'index.html')) {
+        if (namaFileAktif === hrefTautan || (namaFileAktif === '' && hrefTautan === 'index.html')) {
             link.classList.add('active');
         }
     });
