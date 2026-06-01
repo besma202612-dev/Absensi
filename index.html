@@ -65,80 +65,81 @@
 
         /* ==================== AREA KONTEN UTAMA ==================== */
         .main-content {
-            margin-left: 250px; 
+            margin-left: 250px;
             flex: 1;
+            padding: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
-            min-height: 100vh;
-            gap: 20px;
-            flex-wrap: wrap;
         }
 
-        body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-        }
-        
-        .absensi-box { 
-            background-color: #ffffff; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-            width: 100%; 
-            max-width: 450px; 
-        }
-        
-        .absensi-box h2 { 
-            text-align: center; 
-            color: #2c3e50; 
-            margin-bottom: 25px; 
-        }
-        
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #4b5563; font-weight: 600; font-size: 14px; }
-        .input-nama { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        .input-nama:focus { border-color: #3b82f6; outline: none; }
-        .kamar-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .btn-kamar { padding: 10px 0; border: 2px solid #e5e7eb; background-color: #ffffff; border-radius: 6px; font-weight: bold; color: #4b5563; cursor: pointer; transition: all 0.2s; text-align: center; }
-        .btn-kamar:hover { background-color: #f3f4f6; border-color: #d1d5db; }
-        .btn-kamar.active { background-color: #3b82f6; color: #ffffff; border-color: #2563eb; }
-        
-        .status-container { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .status-group { display: flex; gap: 10px; }
-        .btn-status { flex: 1; padding: 14px; border: none; border-radius: 6px; color: #ffffff; font-weight: bold; font-size: 15px; cursor: pointer; }
-        .btn-absen { background-color: #ef4444; }
-        .btn-izin { background-color: #f59e0b; }
-        
-        .btn-add { background-color: #0ea5e9; width: 100%; padding: 12px; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: 15px; cursor: pointer; transition: background-color 0.2s; }
-        .btn-add:hover { background-color: #0284c7; }
-        
-        .btn-status:hover { opacity: 0.9; }
-        .navigation-links { display: flex; justify-content: space-between; margin-top: 25px; font-size: 13px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
-        .navigation-links a { color: #3b82f6; text-decoration: none; font-weight: 600; }
-
-        /* ==================== BOX MODEL IMPORT EXCEL ==================== */
-        .import-box {
+        .form-box {
             background-color: #ffffff;
-            padding: 30px;
+            padding: 40px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
-            border-top: 5px solid #0ea5e9;
+            max-width: 450px;
         }
-        .import-box h3 { color: #2c3e50; margin-bottom: 10px; text-align: center; }
-        .import-box p { font-size: 12px; color: #64748b; margin-bottom: 15px; line-height: 1.5; }
-        .textarea-import { width: 100%; height: 180px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 6px; resize: none; font-family: monospace; font-size: 13px; margin-bottom: 15px; }
-        .textarea-import:focus { border-color: #0ea5e9; outline: none; }
-        .btn-proses-import { width: 100%; padding: 12px; background-color: #1e293b; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .btn-proses-import:hover { background-color: #0f172a; }
+
+        .form-box h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #475569;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            border-color: #3b82f6;
+            background-color: #ffffff;
+        }
+
+        /* TOMBOL AKSI */
+        .btn-submit {
+            width: 100%;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #2563eb;
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        
         <nav class="sidebar">
             <h2>Menu Utama</h2>
             <ul>
@@ -147,175 +148,92 @@
                 <li><a href="izin1.html">Perizinan</a></li>
                 <li><a href="izin2.html">Rekap Sakit</a></li>
                 <li><a href="daftar.html">Alpha</a></li>
-                <li><a href="rekap.html">Rekap Kamar</a></li> 
+                <li><a href="rekap.html">Rekap Kamar</a></li>
                 <li><a href="history.html">Riwayat</a></li>
             </ul>
         </nav>
 
         <main class="main-content">
-            
-            <div class="absensi-box">
-                <h2>Form Absensi</h2>
+            <div class="form-box">
+                <h1>📝 Form Absensi</h1>
                 
-                <form id="formAbsen">
+                <form id="absensiForm" onsubmit="simpanAbsensi(event)">
                     <div class="form-group">
-                        <label for="nama">Nama Lengkap</label>
-                        <input type="text" id="nama" class="input-nama" placeholder="MASUKKAN NAMA KAPITAL">
+                        <label for="kamarSelect">🚪 Pilih Kamar</label>
+                        <select id="kamarSelect" required>
+                            <option value="" disabled selected>-- Pilih Kamar --</option>
+                            <script>
+                                for(let i=1; i<=13; i++) {
+                                    document.write(`<option value="A${i}">Kamar A${i}</option>`);
+                                }
+                            </script>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Pilih Kamar (A1 - A13)</label>
-                        <div class="kamar-list" id="kamarContainer"></div>
-                        <input type="hidden" id="kamarTerpilih">
+                        <label for="namaInput">👤 Nama Lengkap Santri</label>
+                        <input type="text" id="namaInput" placeholder="Masukkan nama santri..." required style="text-transform: uppercase;">
                     </div>
 
                     <div class="form-group">
-                        <label>Aksi / Status Kehadiran</label>
-                        <div class="status-container">
-                            <button type="button" class="btn-add" onclick="tambahKeDaftarSantri()">➕ Tambah ke Daftar Santri (List)</button>
-                            
-                            <div class="status-group">
-                                <button type="button" class="btn-status btn-absen" onclick="prosesAbsen('Absen')">Absen</button>
-                                <button type="button" class="btn-status btn-izin" onclick="prosesAbsen('Izin')">Izin</button>
-                            </div>
-                        </div>
+                        <label for="statusSelect">📊 Status Presensi</label>
+                        <select id="statusSelect" required>
+                            <option value="" disabled selected>-- Pilih Status --</option>
+                            <option value="Absen">Alpha / Tanpa Keterangan</option>
+                            <option value="Izin">Izin / Sakit / Pulang</option>
+                        </select>
                     </div>
+
+                    <button type="submit" class="btn-submit">💾 Kirim Presensi</button>
                 </form>
-                
-                <div class="navigation-links">
-                    <a href="list.html">📁 Lihat Data Santri</a>
-                    <a href="rekap.html">📊 Rekap Absen</a>
-                </div>
             </div>
-
-            <div class="import-box">
-                <h3>⚡ Import Masal dari Excel</h3>
-                <p><strong>Cara Pakai:</strong><br>
-                1. Pilih Kamar terlebih dahulu di form sebelah kiri.<br>
-                2. Blok kolum Nama Santri di Excel, lalu tekan <b>Copy (Ctrl+C)</b>.<br>
-                3. Tempel <b>(Ctrl+V)</b> ke kotak di bawah ini, lalu klik tombol Proses.</p>
-                
-                <textarea id="textCopiedExcel" class="textarea-import" placeholder="Tempel (Paste) daftar nama dari excel di sini"></textarea>
-                <button type="button" class="btn-proses-import" onclick="prosesImportMasalExcel()">🚀 Proses Masuk ke List</button>
-            </div>
-
         </main>
-
     </div>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
 <script>
-    const container = document.getElementById('kamarContainer');
-    const inputKamar = document.getElementById('kamarTerpilih');
+    // Konfigurasi Firebase Realtime Database Anda
+    const firebaseConfig = {
+        apiKey: "AIzaSyBxA...",
+        authDomain: "absensi-besma.firebaseapp.com",
+        databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "absensi-besma",
+        storageBucket: "absensi-besma.appspot.com",
+        messagingSenderId: "1234567890",
+        appId: "1:12345678:web:abcd1234"
+    };
+    
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    container.innerHTML = ''; 
+    // Variabel penampung data cloud lokal
+    let globalDataIzinAsrama = [];
+    let globalDataAbsensiAsrama = [];
 
-    for (let i = 1; i <= 13; i++) {
-        const namaKamar = `A${i}`;
-        const btn = document.createElement('button');
-        btn.type = 'button'; 
-        btn.className = 'btn-kamar'; 
-        btn.textContent = namaKamar;
-        btn.onclick = function() {
-            document.querySelectorAll('.btn-kamar').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active'); 
-            inputKamar.value = namaKamar;
-        };
-        container.appendChild(btn);
-    }
+    // Mengambil data secara real-time untuk validasi proteksi izin aktif
+    db.ref('dataIzinAsrama').on('value', (snapshot) => {
+        globalDataIzinAsrama = snapshot.val() || [];
+    });
 
-    // === FITUR BARU: LOGIKA PROSES DATA COPAS EXCEL ===
-    function prosesImportMasalExcel() {
-        const kamarInput = inputKamar.value;
-        const rawText = document.getElementById('textCopiedExcel').value;
+    // Mengambil data secara real-time untuk penambahan log absensi baru
+    db.ref('dataAbsensiAsrama').on('value', (snapshot) => {
+        globalDataAbsensiAsrama = snapshot.val() || [];
+    });
 
-        if (!kamarInput) {
-            alert('PILIH KAMAR TERLEBIH DAHULU di panel form sebelah kiri!');
-            return;
-        }
-        if (!rawText.trim()) {
-            alert('Kotak teks tempel masih kosong! Silakan salin nama dari excel terlebih dahulu.');
-            return;
-        }
+    // ==================== FUNGSI UTAMA PENYIMPANAN FORM ====================
+    function simpanAbsensi(event) {
+        event.preventDefault();
 
-        // Pecah baris teks dari excel menjadi array
-        const barisNama = rawText.split('\n');
-        let dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-        let jumlahBerhasil = 0;
+        const kamarInput = document.getElementById('kamarSelect').value;
+        const namaInput = document.getElementById('namaInput').value.trim().toUpperCase();
+        const status = document.getElementById('statusSelect').value;
 
-        barisNama.forEach(baris => {
-            let namaBersih = baris.trim();
-            
-            // Mengabaikan baris kosong atau baris penomoran jika tidak sengaja tersalin
-            if (namaBersih !== "" && isNaN(namaBersih)) {
-                namaBersih = namaBersih.toUpperCase();
-                
-                // Cek duplikasi agar tidak ada santri ganda di kamar yang sama
-                const sudahAda = dataSantriMaster.some(s => s.nama.toUpperCase() === namaBersih && s.kamar === kamarInput);
-                
-                if (!sudahAda) {
-                    dataSantriMaster.push({
-                        nama: namaBersih,
-                        kamar: kamarInput
-                    });
-                    jumlahBerhasil++;
-                }
-            }
-        });
-
-        // Simpan ke database pusat
-        localStorage.setItem('dataSantriMaster', JSON.stringify(dataSantriMaster));
-        
-        alert(`Selesai! Berhasil mengimpor ${jumlahBerhasil} santri ke dalam Kamar ${kamarInput}.`);
-        
-        // Reset kolom text area
-        document.getElementById('textCopiedExcel').value = "";
-        
-        // Alihkan halaman secara otomatis ke list.html untuk melihat hasilnya
-        window.location.href = 'list.html';
-    }
-
-    // Tambah Master Data Santri Tunggal secara Manual
-    function tambahKeDaftarSantri() {
-        const namaInput = document.getElementById('nama').value.trim();
-        const kamarInput = inputKamar.value;
-
-        if (!namaInput || !kamarInput) {
-            alert('Harap isi nama dan pilih kamar terlebih dahulu!'); 
-            return;
-        }
-
-        let dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-        const sudahAda = dataSantriMaster.some(s => s.nama.toLowerCase() === namaInput.toLowerCase() && s.kamar === kamarInput);
-        
-        if (sudahAda) {
-            alert('Santri ini sudah terdaftar di kamar tersebut!');
-            return;
-        }
-
-        dataSantriMaster.push({ nama: namaInput.toUpperCase(), kamar: kamarInput });
-        localStorage.setItem('dataSantriMaster', JSON.stringify(dataSantriMaster));
-
-        alert(`Berhasil menambahkan ${namaInput.toUpperCase()} ke Kamar ${kamarInput}!`);
-        window.location.href = 'list.html';
-    }
-
-    function prosesAbsen(status) {
-        const namaInput = document.getElementById('nama').value.trim();
-        const kamarInput = inputKamar.value;
-
-        if (!namaInput || !kamarInput) {
-            alert('Harap isi nama dan pilih kamar terlebih dahulu!'); 
-            return;
-        }
-
-        const waktuSekarang = new Date().getTime();
-        let dataIzin = JSON.parse(localStorage.getItem('dataIzinAsrama')) || [];
-        dataIzin = dataIzin.filter(item => item.waktuHabis > waktuSekarang);
-        localStorage.setItem('dataIzinAsrama', JSON.stringify(dataIzin));
-
-        const sedangIzin = dataIzin.some(item => 
-            item.nama.toLowerCase() === namaInput.toLowerCase() && 
-            item.kamar === kamarInput
+        // Proteksi pengecekan silang status perizinan yang sedang aktif dari Firebase cloud
+        const sedangIzin = globalDataIzinAsrama.some(item => 
+            item.nama.trim().toUpperCase() === namaInput && item.kamar === kamarInput
         );
 
         if (sedangIzin) {
@@ -327,18 +245,33 @@
         const tanggal = `${hariIni.getFullYear()}-${String(hariIni.getMonth() + 1).padStart(2, '0')}-${String(hariIni.getDate()).padStart(2, '0')}`;
 
         if (status === 'Izin') {
-            sessionStorage.setItem('tempNama', namaInput.toUpperCase());
+            // Jika memilih Izin, lempar data sementara ke form detail izin via sessionStorage
+            sessionStorage.setItem('tempNama', namaInput);
             sessionStorage.setItem('tempKamar', kamarInput);
             sessionStorage.setItem('tempTanggal', tanggal);
             window.location.href = 'izin.html';
         } else {
-            let dataAbsensi = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-            dataAbsensi.push({ tanggal, kamar: kamarInput, nama: namaInput.toUpperCase(), status, keterangan: '' });
-            localStorage.setItem('dataAbsensiAsrama', JSON.stringify(dataAbsensi));
-            window.location.href = 'daftar.html';
+            // Jika memilih Alpha/Absen, masukkan ke dalam log data absensi global
+            globalDataAbsensiAsrama.push({ 
+                tanggal: tanggal, 
+                kamar: kamarInput, 
+                nama: namaInput, 
+                status: status, 
+                keterangan: '' 
+            });
+
+            // Set data array terbaru kembali ke Firebase Cloud Node 'dataAbsensiAsrama'
+            db.ref('dataAbsensiAsrama').set(globalDataAbsensiAsrama)
+                .then(() => {
+                    window.location.href = 'daftar.html';
+                })
+                .catch((error) => {
+                    alert("Gagal mengirim data ke cloud: " + error.message);
+                });
         }
     }
 
+    // ==================== REPARASI NAVIGATOR SIDEBAR AKTIF ====================
     const namaFileAktif = window.location.pathname.split('/').pop();
     document.querySelectorAll('.sidebar ul li a').forEach(link => {
         link.classList.remove('active');
