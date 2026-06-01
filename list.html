@@ -125,6 +125,26 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
+        /* === TOMBOL TAMBAH SANTRI BARU === */
+        .btn-tambah-santri {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-tambah-santri:hover {
+            background-color: #059669;
+            transform: translateY(-1px);
+        }
+
         /* === GRID TOMBOL KAMAR === */
         .grid-kamar { 
             display: grid; 
@@ -273,6 +293,46 @@
             background-color: #ea580c;
         }
 
+        /* === STYLE FORM INPUT DI MODAL TAMBAH === */
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #475569;
+            font-size: 14px;
+        }
+        .form-control {
+            padding: 10px 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+        }
+        .form-control:focus {
+            border-color: #3b82f6;
+        }
+        .btn-submit-santri {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-submit-santri:hover {
+            background-color: #2563eb;
+        }
+
         /* === TABEL SISTEM DALAM MODAL & PENCARIAN === */
         .list-table { 
             width: 100%; 
@@ -393,6 +453,7 @@
                     <div class="wrapper-search">
                         <input type="text" id="searchGlobalInput" class="input-search-santri" placeholder="🔍 Masukkan nama santri (Semua Kamar)..." oninput="handlePencarianGlobal()">
                     </div>
+                    <button class="btn-tambah-santri" onclick="bukaModalTambahSantri()">➕ Tambah Santri</button>
                     <button class="btn-reset-global" onclick="resetSemuaKamarSekaligus()">🔄 Reset Semua Kamar</button>
                 </div>
 
@@ -424,527 +485,647 @@
         </div>
     </div>
 
+    <div class="modal" id="modalTambahSantri" onclick="tutupModalTambahSantri(event)">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="paksaTutupModalTambah()">&times;</span>
+            <h3 style="margin-top: 0; color: #2c3e50; margin-bottom: 20px;">👤 Tambah Santri Baru</h3>
+            
+            <form id="formInputSantriBaru" onsubmit="simpanSantriBaru(event)">
+                <div class="form-group">
+                    <label for="inputNamaSantri">Nama Lengkap Santri:</label>
+                    <input type="text" id="inputNamaSantri" class="form-control" placeholder="Masukkan nama lengkap..." required style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label for="inputKamarSantri">Pilih Kamar:</label>
+                    <select id="inputKamarSantri" class="form-control" required>
+                        <option value="" disabled selected>-- Pilih Kamar (A1 - A13) --</option>
+                        <option value="A1">Kamar A1</option>
+                        <option value="A2">Kamar A2</option>
+                        <option value="A3">Kamar A3</option>
+                        <option value="A4">Kamar A4</option>
+                        <option value="A5">Kamar A5</option>
+                        <option value="A6">Kamar A6</option>
+                        <option value="A7">Kamar A7</option>
+                        <option value="A8">Kamar A8</option>
+                        <option value="A9">Kamar A9</option>
+                        <option value="A10">Kamar A10</option>
+                        <option value="A11">Kamar A11</option>
+                        <option value="A12">Kamar A12</option>
+                        <option value="A13">Kamar A13</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit-santri">💾 Simpan Data Santri</button>
+            </form>
+        </div>
+    </div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 <script>
+    // 1. KONFIGURASI FIREBASE CLOUD REALTIME DATABASE
+    const firebaseConfig = {
+        apiKey: "RAHASIA_API_KEY_KAMU",
+        authDomain: "proyek-kamu.firebaseapp.com",
+        databaseURL: "https://proyek-kamu-default-rtdb.firebaseio.com",
+        projectId: "proyek-kamu",
+        storageBucket: "proyek-kamu.appspot.com",
+        messagingSenderId: "1234567890",
+        appId: "1:1234567890:web:abcdef"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    // Variabel Penampung Sinkronisasi Cloud
+    let dataSantriMaster = [];
+    let dataAbsensiAsrama = [];
+    let statusIzinSantriAktif = null;
+    let statusSantriHarian = {}; // Digunakan khusus pencatatan transisi internal
+
     let kamarAktifSekarang = "";
 
-// === RENDER GRID UTAMA ===
-function renderGridKamar() {
-    const gridContainer = document.getElementById('gridKamarContainer');
-    const dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-    
-    const hitungKamar = {};
-    for (let i = 1; i <= 13; i++) { hitungKamar[`A${i}`] = 0; }
-    dataSantriMaster.forEach(s => { 
-        if (s.kamar) {
-            const kClean = s.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            if (hitungKamar[kClean] !== undefined) {
-                hitungKamar[kClean]++; 
+    // 2. AMBIL DATA SECARA REALTIME DARI FIREBASE NODE CLOUD
+    function listenFirebaseData() {
+        // Ambil Node Master Santri
+        db.ref('dataSantriMaster').on('value', (snapshot) => {
+            const val = snapshot.val();
+            if (val) {
+                // Konversi data object/array dari Firebase
+                dataSantriMaster = Object.keys(val).map(key => ({
+                    idFirebase: key,
+                    ...val[key]
+                }));
+            } else {
+                dataSantriMaster = [];
             }
-        }
-    });
+            renderGridKamar();
+            if (kamarAktifSekarang) segarkanIsiFormModal();
+            handlePencarianGlobal();
+        });
 
-    let htmlGrid = "";
-    for (let i = 1; i <= 13; i++) {
-        const namaKamar = `A${i}`;
-        htmlGrid += `
-            <button class="btn-kamar-biasa" onclick="bukaFormSantri('${namaKamar}')">
-                <span>🚪 KAMAR ${namaKamar}</span>
-                <span class="badge-count">${hitungKamar[namaKamar]} Santri</span>
-            </button>
-        `;
+        // Ambil Node Riwayat Absensi
+        db.ref('dataAbsensiAsrama').on('value', (snapshot) => {
+            const val = snapshot.val();
+            if (val) {
+                dataAbsensiAsrama = Object.keys(val).map(key => ({
+                    idFirebase: key,
+                    ...val[key]
+                }));
+            } else {
+                dataAbsensiAsrama = [];
+            }
+            if (kamarAktifSekarang) segarkanIsiFormModal();
+            handlePencarianGlobal();
+        });
+
+        // Ambil Node Sinkronisasi Izin Aktif
+        db.ref('statusIzinSantriAktif').on('value', (snapshot) => {
+            statusIzinSantriAktif = snapshot.val();
+            if (kamarAktifSekarang) segarkanIsiFormModal();
+            handlePencarianGlobal();
+        });
     }
-    gridContainer.innerHTML = htmlGrid;
-}
 
-// === INISIALISASI TANGGAL ===
-function inisialisasiTanggal() {
-    const inputTanggal = document.getElementById('pilihTanggalAbsen');
-    const tanggalTersimpan = localStorage.getItem('tanggalAbsenTerakhir');
-    
-    if (tanggalTersimpan) {
-        inputTanggal.value = tanggalTersimpan;
-    } else {
+    // === RENDER GRID UTAMA ===
+    function renderGridKamar() {
+        const gridContainer = document.getElementById('gridKamarContainer');
+        
+        const hitungKamar = {};
+        for (let i = 1; i <= 13; i++) { hitungKamar[`A${i}`] = 0; }
+        
+        dataSantriMaster.forEach(s => { 
+            if (s.kamar) {
+                const kClean = s.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                if (hitungKamar[kClean] !== undefined) {
+                    hitungKamar[kClean]++; 
+                }
+            }
+        });
+
+        let htmlGrid = "";
+        for (let i = 1; i <= 13; i++) {
+            const namaKamar = `A${i}`;
+            htmlGrid += `
+                <button class="btn-kamar-biasa" onclick="bukaFormSantri('${namaKamar}')">
+                    <span>🚪 KAMAR ${namaKamar}</span>
+                    <span class="badge-count">${hitungKamar[namaKamar]} Santri</span>
+                </button>
+            `;
+        }
+        gridContainer.innerHTML = htmlGrid;
+    }
+
+    // === INISIALISASI TANGGAL ===
+    function inisialisasiTanggal() {
+        const inputTanggal = document.getElementById('pilihTanggalAbsen');
+        const tanggalTersimpan = localStorage.getItem('tanggalAbsenTerakhir');
+        
+        if (tanggalTersimpan) {
+            inputTanggal.value = tanggalTersimpan;
+        } else {
+            const sekarang = new Date();
+            const offset = sekarang.getTimezoneOffset();
+            const tanggalLokal = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+            
+            inputTanggal.value = tanggalLokal;
+            localStorage.setItem('tanggalAbsenTerakhir', tanggalLokal);
+        }
+    }
+
+    // === BUKA MODAL KAMAR ===
+    function bukaFormSantri(namaKamar) {
+        kamarAktifSekarang = namaKamar;
+        document.getElementById('modalJudulKamar').textContent = `🚪 DAFTAR SANTRI KAMAR ${namaKamar}`;
+        document.getElementById('pilihTanggalAbsen').value = localStorage.getItem('tanggalAbsenTerakhir');
+
+        segarkanIsiFormModal();
+        document.getElementById('modalFormSantri').classList.add('show');
+    }
+
+    // === KONTROL PERUBAHAN TANGGAL ===
+    function handlePerubahanTanggal() {
+        const tanggalBaru = document.getElementById('pilihTanggalAbsen').value;
+        localStorage.setItem('tanggalAbsenTerakhir', tanggalBaru);
+        
+        if (kamarAktifSekarang) {
+            segarkanIsiFormModal();
+        }
+        handlePencarianGlobal();
+    }
+
+    // === LOGIKA MODAL INPUT TAMBAH SANTRI BARU ===
+    function bukaModalTambahSantri() {
+        document.getElementById('formInputSantriBaru').reset();
+        document.getElementById('modalTambahSantri').classList.add('show');
+    }
+    function paksaTutupModalTambah() {
+        document.getElementById('modalTambahSantri').classList.remove('show');
+    }
+    function tutupModalTambahSantri(e) {
+        if (e.target.id === 'modalTambahSantri') paksaTutupModalTambah();
+    }
+
+    // === SIMPAN DATA SANTRI BARU LANGSUNG KE FIREBASE ===
+    function simpanSantriBaru(e) {
+        e.preventDefault();
+        const namaInput = document.getElementById('inputNamaSantri').value.trim().toUpperCase();
+        const kamarInput = document.getElementById('inputKamarSantri').value;
+
+        if (!namaInput || !kamarInput) return;
+
+        // Validasi duplikasi lokal
+        const adaDuplikat = dataSantriMaster.some(s => 
+            s.nama.trim().toUpperCase() === namaInput && 
+            s.kamar.trim().toUpperCase().replace("KAMAR", "").trim() === kamarInput.replace("KAMAR", "").trim()
+        );
+
+        if (adaDuplikat) {
+            alert(`Pemberitahuan: Santri bernama "${namaInput}" sudah terdaftar di Kamar ${kamarInput}!`);
+            return;
+        }
+
+        // Push data baru ke node Firebase 'dataSantriMaster'
+        db.ref('dataSantriMaster').push({
+            nama: namaInput,
+            kamar: kamarInput
+        }).then(() => {
+            alert(`Berhasil menambahkan ${namaInput} ke dalam Kamar ${kamarInput}!`);
+            paksaTutupModalTambah();
+        }).catch((err) => {
+            alert("Gagal menyimpan ke cloud: " + err.message);
+        });
+    }
+
+    // === LOGIKA PENCARIAN GLOBAL REAL-TIME ===
+    function handlePencarianGlobal() {
+        const keyword = document.getElementById('searchGlobalInput').value.trim().toLowerCase();
+        const gridContainer = document.getElementById('gridKamarContainer');
+        const pencarianContainer = document.getElementById('pencarianGlobalContainer');
+        const tabelHasilBox = document.getElementById('tabelHasilPencarianGlobal');
+        
+        if (keyword === "") {
+            gridContainer.style.display = "grid";
+            pencarianContainer.style.display = "none";
+            return;
+        }
+
+        gridContainer.style.display = "none";
+        pencarianContainer.style.display = "block";
+
+        const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
+        
         const sekarang = new Date();
         const offset = sekarang.getTimezoneOffset();
-        const tanggalLokal = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
-        
-        inputTanggal.value = tanggalLokal;
-        localStorage.setItem('tanggalAbsenTerakhir', tanggalLokal);
-    }
-}
+        const hariIni = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
 
-// === BUKA MODAL KAMAR ===
-function bukaFormSantri(namaKamar) {
-    kamarAktifSekarang = namaKamar;
-    document.getElementById('modalJudulKamar').textContent = `🚪 DAFTAR SANTRI KAMAR ${namaKamar}`;
-    document.getElementById('pilihTanggalAbsen').value = localStorage.getItem('tanggalAbsenTerakhir');
+        let hasilFilter = dataSantriMaster.filter(s => s.nama && s.nama.toLowerCase().includes(keyword));
+        hasilFilter.sort((a, b) => a.nama.localeCompare(b.nama));
 
-    segarkanIsiFormModal();
-    document.getElementById('modalFormSantri').classList.add('show');
-}
+        document.getElementById('infoJumlahHasil').textContent = `🔍 Hasil Pencarian: Ditemukan ${hasilFilter.length} Santri`;
 
-// === KONTROL PERUBAHAN TANGGAL ===
-function handlePerubahanTanggal() {
-    const tanggalBaru = document.getElementById('pilihTanggalAbsen').value;
-    localStorage.setItem('tanggalAbsenTerakhir', tanggalBaru);
-    
-    // Sinkronisasi penyegaran data, baik di modal ataupun di list pencarian global
-    if (kamarAktifSekarang) {
-        segarkanIsiFormModal();
-    }
-    handlePencarianGlobal();
-}
-
-// === LOGIKA PENCARIAN GLOBAL REAL-TIME (SETIAP HURUF TERKONEKSI) ===
-function handlePencarianGlobal() {
-    const keyword = document.getElementById('searchGlobalInput').value.trim().toLowerCase();
-    const gridContainer = document.getElementById('gridKamarContainer');
-    const pencarianContainer = document.getElementById('pencarianGlobalContainer');
-    const tabelHasilBox = document.getElementById('tabelHasilPencarianGlobal');
-    
-    // Jika kolom pencarian kosong, kembalikan ke tampilan Grid Kamar biasa
-    if (keyword === "") {
-        gridContainer.style.display = "grid";
-        pencarianContainer.style.display = "none";
-        return;
-    }
-
-    // Sembunyikan Grid Kamar, tampilkan area hasil pencarian
-    gridContainer.style.display = "none";
-    pencarianContainer.style.display = "block";
-
-    const dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-    const statusSantriHarian = JSON.parse(localStorage.getItem('statusSantriHarian')) || {};
-    const dataAbsensiAsrama = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-    const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
-    
-    const sekarang = new Date();
-    const offset = sekarang.getTimezoneOffset();
-    const hariIni = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
-
-    // Filter data santri dari SEMUA KAMAR secara real-time
-    let hasilFilter = dataSantriMaster.filter(s => s.nama && s.nama.toLowerCase().includes(keyword));
-    hasilFilter.sort((a, b) => a.nama.localeCompare(b.nama));
-
-    document.getElementById('infoJumlahHasil').textContent = `🔍 Hasil Pencarian: Ditemukan ${hasilFilter.length} Santri`;
-
-    if (hasilFilter.length === 0) {
-        tabelHasilBox.innerHTML = `<p style="text-align:center; color:#999; padding:30px; font-style:italic; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">Nama santri tidak ditemukan di kamar manapun.</p>`;
-        return;
-    }
-
-    let htmlTabel = `
-        <table class="list-table" style="background:#fff; border-radius:8px; overflow:hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-            <thead>
-                <tr>
-                    <th style="width: 40px; text-align: center;">No</th>
-                    <th>Nama Lengkap</th>
-                    <th style="width: 140px; text-align: center;">Status Presensi</th>
-                    <th style="width: 80px; text-align: center;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    hasilFilter.forEach((santri, index) => {
-        const kClean = (santri.kamar || "").trim().toUpperCase().replace("KAMAR", "").trim();
-        const namaKamarLengkap = kClean.startsWith('A') ? kClean : `A${kClean}`;
-        
-        const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-        const keyStatus = `${namaKamarLengkap}_${namaSantriClean}`;
-        
-        const hasilCekIzin = cekApakahSantriIzin(santri.nama, namaKamarLengkap, tanggalTerpilih);
-
-        const adaDiDataLogAbsen = dataAbsensiAsrama.some(item => {
-            let tglItem = item.tanggal || "";
-            if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
-            const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-            const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            return nLog === namaSantriClean && kLog === kClean && tglItem === tanggalTerpilih;
-        });
-
-        let teksTombol = "✓ Hadir";
-        let kelasWarnaTombol = "btn-status-hadir";
-        let fungsiKlik = `onclick="toggleStatusSantriGlobal('${santri.nama.replace(/'/g, "\\'")}', '${namaKamarLengkap}', 'hadir')"`;
-        let trClass = "";
-        let infoIzin = "";
-
-        if (hasilCekIzin.status) {
-            trClass = "class='row-terblokir-izin'";
-            teksTombol = "📝 Izin Aktif";
-            kelasWarnaTombol = "btn-status-izin-aktif";
-            fungsiKlik = `onclick="peringatanIzinAktif('${santri.nama.replace(/'/g, "\\'")}', '${hasilCekIzin.keterangan.replace(/'/g, "\\'")}')"`;
-            
-            infoIzin = `
-                <small style="display:block; color:#b45309; font-size:11px; font-weight:600; margin-top: 2px;">
-                    ⚠️ Hub Perizinan: "${hasilCekIzin.keterangan}"
-                </small>
-            `;
-        } else {
-            let statusSekarang = 'hadir';
-            if (tanggalTerpilih === hariIni) {
-                statusSekarang = statusSantriHarian[keyStatus] || 'hadir';
-            } else {
-                statusSekarang = adaDiDataLogAbsen ? 'absen' : 'hadir';
-            }
-
-            if (statusSekarang === 'absen') {
-                teksTombol = "🚫 Absen";
-                kelasWarnaTombol = "btn-status-absen";
-                fungsiKlik = `onclick="toggleStatusSantriGlobal('${santri.nama.replace(/'/g, "\\'")}', '${namaKamarLengkap}', 'absen')"`;
-            }
+        if (hasilFilter.length === 0) {
+            tabelHasilBox.innerHTML = `<p style="text-align:center; color:#999; padding:30px; font-style:italic; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">Nama santri tidak ditemukan di kamar manapun.</p>`;
+            return;
         }
 
-        htmlTabel += `
-            <tr ${trClass}>
-                <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
-                <td>
-                    <span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span>
-                    <span class="badge-kamar-info">Kamar ${namaKamarLengkap}</span>
-                    ${infoIzin}
-                </td>
-                <td style="text-align: center;">
-                    <button class="btn-toggle-status ${kelasWarnaTombol}" ${fungsiKlik}>
-                        ${teksTombol}
-                    </button>
-                </td>
-                <td style="text-align: center;">
-                    <button class="btn-hapus-santri" onclick="hapusSantriGlobal('${santri.nama.replace(/'/g, "\\'")}', '${santri.kamar}')">
-                        🗑️ Hapus
-                    </button>
-                </td>
-            </tr>
+        let htmlTabel = `
+            <table class="list-table" style="background:#fff; border-radius:8px; overflow:hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <thead>
+                    <tr>
+                        <th style="width: 40px; text-align: center;">No</th>
+                        <th>Nama Lengkap</th>
+                        <th style="width: 140px; text-align: center;">Status Presensi</th>
+                        <th style="width: 80px; text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
         `;
-    });
 
-    htmlTabel += `</tbody></table>`;
-    tabelHasilBox.innerHTML = htmlTabel;
-}
+        hasilFilter.forEach((santri, index) => {
+            const kClean = (santri.kamar || "").trim().toUpperCase().replace("KAMAR", "").trim();
+            const namaKamarLengkap = kClean.startsWith('A') ? kClean : `A${kClean}`;
+            
+            const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+            const keyStatus = `${namaKamarLengkap}_${namaSantriClean}`;
+            
+            const hasilCekIzin = cekApakahSantriIzin(santri.nama, namaKamarLengkap, tanggalTerpilih);
 
-// === LOGIKA TOGGLE STATUS DARI PENCARIAN GLOBAL ===
-function toggleStatusSantriGlobal(namaSantri, namaKamar, statusLama) {
-    const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
-    const sekarang = new Date();
-    const offset = sekarang.getTimezoneOffset();
-    const hariIni = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
-    
-    const statusSantriHarian = JSON.parse(localStorage.getItem('statusSantriHarian')) || {};
-    const keyStatus = `${namaKamar}_${namaSantri.trim().toLowerCase().replace(/\s+/g, ' ')}`;
-    let dataAbsensiAsrama = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-    const kamarClean = namaKamar.trim().toUpperCase().replace("KAMAR", "").trim();
+            const adaDiDataLogAbsen = dataAbsensiAsrama.some(item => {
+                let tglItem = item.tanggal || "";
+                if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+                const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                return nLog === namaSantriClean && kLog === kClean && tglItem === tanggalTerpilih;
+            });
 
-    if (statusLama === 'absen') {
-        if (tanggalTerpilih === hariIni) {
-            statusSantriHarian[keyStatus] = 'hadir';
-        }
-        dataAbsensiAsrama = dataAbsensiAsrama.filter(item => {
-            let tglItem = item.tanggal || "";
-            if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
-            const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-            const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            return !(nLog === namaSantri.trim().toLowerCase().replace(/\s+/g, ' ') && kLog === kamarClean && tglItem === tanggalTerpilih);
+            let teksTombol = "✓ Hadir";
+            let kelasWarnaTombol = "btn-status-hadir";
+            let fungsiKlik = `onclick="toggleStatusSantriGlobal('${santri.nama.replace(/'/g, "\\'")}', '${namaKamarLengkap}', 'hadir')"`;
+            let trClass = "";
+            let infoIzin = "";
+
+            if (hasilCekIzin.status) {
+                trClass = "class='row-terblokir-izin'";
+                teksTombol = "📝 Izin Aktif";
+                kelasWarnaTombol = "btn-status-izin-aktif";
+                fungsiKlik = `onclick="peringatanIzinAktif('${santri.nama.replace(/'/g, "\\'")}', '${hasilCekIzin.keterangan.replace(/'/g, "\\'")}')"`;
+                
+                infoIzin = `
+                    <small style="display:block; color:#b45309; font-size:11px; font-weight:600; margin-top: 2px;">
+                        ⚠️ Hub Perizinan: "${hasilCekIzin.keterangan}"
+                    </small>
+                `;
+            } else {
+                let statusSekarang = 'hadir';
+                if (tanggalTerpilih === hariIni) {
+                    statusSekarang = statusSantriHarian[keyStatus] || 'hadir';
+                } else {
+                    statusSekarang = adaDiDataLogAbsen ? 'absen' : 'hadir';
+                }
+
+                if (statusSekarang === 'absen') {
+                    teksTombol = "🚫 Absen";
+                    kelasWarnaTombol = "btn-status-absen";
+                    fungsiKlik = `onclick="toggleStatusSantriGlobal('${santri.nama.replace(/'/g, "\\'")}', '${namaKamarLengkap}', 'absen')"`;
+                }
+            }
+
+            htmlTabel += `
+                <tr ${trClass}>
+                    <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
+                    <td>
+                        <span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span>
+                        <span class="badge-kamar-info">Kamar ${namaKamarLengkap}</span>
+                        ${infoIzin}
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-toggle-status ${kelasWarnaTombol}" ${fungsiKlik}>
+                            ${teksTombol}
+                        </button>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-hapus-santri" onclick="hapusSantriGlobal('${santri.idFirebase}', '${santri.nama.replace(/'/g, "\\'")}', '${santri.kamar}')">
+                            🗑️ Hapus
+                        </button>
+                    </td>
+                </tr>
+            `;
         });
-    } else {
-        if (tanggalTerpilih === hariIni) {
-            statusSantriHarian[keyStatus] = 'absen';
-        }
-        const sudahAda = dataAbsensiAsrama.some(item => {
-            let tglItem = item.tanggal || "";
-            if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
-            const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-            const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            return nLog === namaSantri.trim().toLowerCase().replace(/\s+/g, ' ') && kLog === kamarClean && tglItem === tanggalTerpilih;
-        });
 
-        if (!sudahAda) {
-            dataAbsensiAsrama.push({
-                kamar: kamarClean,
-                nama: namaSantri.trim().toUpperCase(),
-                tanggal: tanggalTerpilih,
-                status: "Absen",
-                return_date: ""
+        htmlTabel += `</tbody></table>`;
+        tabelHasilBox.innerHTML = htmlTabel;
+    }
+
+    // === LOGIKA TOGGLE STATUS ABSENSI FIREBASE CLOUD ===
+    function toggleStatusSantriGlobal(namaSantri, namaKamar, statusLama) {
+        const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
+        const sekarang = new Date();
+        const offset = aerospace = sekarang.getTimezoneOffset();
+        const hariIni = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+        
+        const keyStatus = `${namaKamar}_${namaSantri.trim().toLowerCase().replace(/\s+/g, ' ')}`;
+        const kamarClean = namaKamar.trim().toUpperCase().replace("KAMAR", "").trim();
+
+        if (statusLama === 'absen') {
+            if (tanggalTerpilih === hariIni) {
+                statusSantriHarian[keyStatus] = 'hadir';
+            }
+            
+            // Cari data di dataAbsensiAsrama cloud dan hapus node-nya
+            const dataDitemukan = dataAbsensiAsrama.filter(item => {
+                let tglItem = item.tanggal || "";
+                if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+                const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                return nLog === namaSantri.trim().toLowerCase().replace(/\s+/g, ' ') && kLog === kamarClean && tglItem === tanggalTerpilih;
+            });
+
+            dataDitemukan.forEach(item => {
+                if (item.idFirebase) {
+                    db.ref(`dataAbsensiAsrama/${item.idFirebase}`).remove();
+                }
+            });
+        } else {
+            if (tanggalTerpilih === hariIni) {
+                statusSantriHarian[keyStatus] = 'absen';
+            }
+            
+            const sudahAda = dataAbsensiAsrama.some(item => {
+                let tglItem = item.tanggal || "";
+                if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+                const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                return nLog === namaSantri.trim().toLowerCase().replace(/\s+/g, ' ') && kLog === kamarClean && tglItem === tanggalTerpilih;
+            });
+
+            if (!sudahAda) {
+                db.ref('dataAbsensiAsrama').push({
+                    kamar: kamarClean,
+                    nama: namaSantri.trim().toUpperCase(),
+                    tanggal: tanggalTerpilih,
+                    status: "Absen",
+                    return_date: ""
+                });
+            }
+        }
+    }
+
+    // === FUNGSI HAPUS SANTRI CLOUD DARI PENCARIAN GLOBAL ===
+    function hapusSantriGlobal(idFirebase, namaSantri, kamarSantri) {
+        const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus santri bernama "${namaSantri.toUpperCase()}" dari Kamar ${kamarSantri}?`);
+        if (konfirmasi && idFirebase) {
+            db.ref(`dataSantriMaster/${idFirebase}`).remove().then(() => {
+                alert("Data santri telah dihapus dari cloud.");
             });
         }
     }
 
-    localStorage.setItem('statusSantriHarian', JSON.stringify(statusSantriHarian));
-    localStorage.setItem('dataAbsensiAsrama', JSON.stringify(dataAbsensiAsrama));
-    handlePencarianGlobal(); // Refresh list pencarian langsung
-}
-
-// === FUNGSI HAPUS SANTRI DARI PENCARIAN GLOBAL ===
-function hapusSantriGlobal(namaSantri, kamarSantri) {
-    const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus santri bernama "${namaSantri.toUpperCase()}" dari Kamar ${kamarSantri}?`);
-    if (konfirmasi) {
-        let dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-        dataSantriMaster = dataSantriMaster.filter(s => {
-            return !(s.nama.trim().toUpperCase() === namaSantri.trim().toUpperCase() && s.kamar === kamarSantri);
-        });
-        localStorage.setItem('dataSantriMaster', JSON.stringify(dataSantriMaster));
+    // === LOGIKA PEMERIKSAAN SINKRONISASI PERIZINAN ===
+    function cekApakahSantriIzin(namaSantri, kamarSantri, tanggalAbsenDipilih) {
+        if (!statusIzinSantriAktif) return { status: false, keterangan: "" };
         
-        handlePencarianGlobal(); // Refresh list pencarian langsung
-        renderGridKamar(); // Update counter jumlah santri di grid utama
-    }
-}
+        const namaClean = namaSantri.trim().toUpperCase();
+        const kamarClean = kamarSantri.trim().toUpperCase().replace("KAMAR", "").trim();
+        let dataIzin = null;
 
-/**
- * LOGIKA PEMERIKSAAN IZIN (Toleransi Semua Format Properti Tanggal)
- */
-function cekApakahSantriIzin(namaSantri, kamarSantri, tanggalAbsenDipilih) {
-    const rawIzin = localStorage.getItem('statusIzinSantriAktif');
-    if (!rawIzin) return { status: false, keterangan: "" };
-
-    let statusIzinSantriAktif;
-    try { statusIzinSantriAktif = JSON.parse(rawIzin); } catch(e) { return { status: false, keterangan: "" }; }
-    
-    const namaClean = namaSantri.trim().toUpperCase();
-    const kamarClean = kamarSantri.trim().toUpperCase().replace("KAMAR", "").trim();
-    let dataIzin = null;
-
-    if (Array.isArray(statusIzinSantriAktif)) {
-        dataIzin = statusIzinSantriAktif.find(item => {
-            const itemNama = (item.nama || item.namaSantri || "").trim().toUpperCase();
-            const itemKamar = (item.kamar || item.kamarSantri || "").trim().toUpperCase().replace("KAMAR", "").trim();
-            return itemNama === namaClean && (itemKamar === kamarClean || itemKamar === `A${kamarClean}`);
-        });
-    } else {
-        const keyIzin = `${kamarClean}_${namaClean}`;
-        dataIzin = statusIzinSantriAktif[keyIzin];
-    }
-
-    if (dataIzin) {
-        const tglMulai = dataIzin.tanggalMulai || dataIzin.tglMulai || dataIzin.tanggal || dataIzin.tgl_mulai || dataIzin.tgl_izin || null; 
-        const tglSelesai = dataIzin.tanggalSelesai || dataIzin.tglSelesai || dataIzin.tanggalKembali || dataIzin.tglKembali || dataIzin.tgl_selesai || dataIzin.tgl_kembali || null;
-
-        if (tglMulai && tglSelesai) {
-            const tAbsen = new Date(tanggalAbsenDipilih);
-            const tMulai = new Date(tglMulai);
-            const tSelesai = new Date(tglSelesai);
-            tAbsen.setHours(0,0,0,0); tMulai.setHours(0,0,0,0); tSelesai.setHours(0,0,0,0);
-
-            if (tAbsen < tMulai || tAbsen > tSelesai) { return { status: false, keterangan: "" }; }
-        }
-        return { 
-            status: true, 
-            keterangan: dataIzin.keterangan || dataIzin.alasan || dataIzin.durasi || "Sedang Keluar Izin Asrama"
-        };
-    }
-    return { status: false, keterangan: "" };
-}
-
-// === FUNGSI RESET PER KAMAR ===
-function resetKamarAktif() {
-    if (!kamarAktifSekarang) return;
-    const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
-    const konfirmasi = confirm(`Apakah Anda yakin ingin mereset semua santri di KAMAR ${kamarAktifSekarang} pada tanggal ${tanggalTerpilih} kembali ke status "Hadir"?\n(Santri berstatus izin tidak akan diubah)`);
-    if (!konfirmasi) return;
-
-    const dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-    let statusSantriHarian = JSON.parse(localStorage.getItem('statusSantriHarian')) || {};
-    let dataAbsensiAsrama = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-    const kamarAktifClean = kamarAktifSekarang.trim().toUpperCase().replace("KAMAR", "").trim();
-
-    const santriKamarIni = dataSantriMaster.filter(s => {
-        if(!s.kamar) return false;
-        return s.kamar.trim().toUpperCase().replace("KAMAR", "").trim() === kamarAktifClean;
-    });
-
-    santriKamarIni.forEach(santri => {
-        const cekIzin = cekApakahSantriIzin(santri.nama, kamarAktifSekarang, tanggalTerpilih);
-        if (cekIzin.status) return;
-
-        const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-        const keyStatus = `${kamarAktifSekarang}_${namaSantriClean}`;
-        statusSantriHarian[keyStatus] = 'hadir';
-
-        dataAbsensiAsrama = dataAbsensiAsrama.filter(item => {
-            let tglItem = item.tanggal || "";
-            if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
-            const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-            const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            return !(nLog === namaSantriClean && kLog === kamarAktifClean && tglItem === tanggalTerpilih);
-        });
-    });
-
-    localStorage.setItem('statusSantriHarian', JSON.stringify(statusSantriHarian));
-    localStorage.setItem('dataAbsensiAsrama', JSON.stringify(dataAbsensiAsrama));
-    segarkanIsiFormModal();
-    alert(`Berhasil mereset presensi Kamar ${kamarAktifSekarang}!`);
-}
-
-// === FUNGSI RESET SEMUA KAMAR SEKALIGUS ===
-function resetSemuaKamarSekaligus() {
-    const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
-    const konfirmasi = confirm(`⚠️ PERINGATAN RE-ABSENSI TOTAL ⚠️\n\nApakah Anda yakin ingin mereset TOTAL seluruh santri di SEMUA KAMAR (A1 s/d A13) pada tanggal ${tanggalTerpilih} kembali ke status "Hadir"?\n\n(Santri berstatus izin aktif di izin1.html aman & tidak ikut direset)`);
-    if (!konfirmasi) return;
-
-    const dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-    let statusSantriHarian = JSON.parse(localStorage.getItem('statusSantriHarian')) || {};
-    let dataAbsensiAsrama = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-
-    dataSantriMaster.forEach(santri => {
-        if (!santri.kamar) return;
-        const kClean = santri.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-        const namaKamarLengkap = `A${kClean.replace('A', '')}`; 
-
-        const cekIzin = cekApakahSantriIzin(santri.nama, namaKamarLengkap, tanggalTerpilih);
-        if (cekIzin.status) return;
-
-        const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-        const keyStatus = `${namaKamarLengkap}_${namaSantriClean}`;
-        statusSantriHarian[keyStatus] = 'hadir';
-
-        dataAbsensiAsrama = dataAbsensiAsrama.filter(item => {
-            let tglItem = item.tanggal || "";
-            if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
-            const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-            const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            return !(nLog === namaSantriClean && kLog === kClean && tglItem === tanggalTerpilih);
-        });
-    });
-
-    localStorage.setItem('statusSantriHarian', JSON.stringify(statusSantriHarian));
-    localStorage.setItem('dataAbsensiAsrama', JSON.stringify(dataAbsensiAsrama));
-    
-    if (kamarAktifSekarang) { segarkanIsiFormModal(); }
-    handlePencarianGlobal();
-    alert(`Berhasil mereset seluruh kamar ke status Hadir di tanggal ${tanggalTerpilih}!`);
-}
-
-// === GENERATE TABEL SANTRI DI DALAM MODAL KAMAR ===
-function segarkanIsiFormModal() {
-    if (!kamarAktifSekarang) return;
-
-    const bodyModal = document.getElementById('modalIsiSantri');
-    const dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-    const statusSantriHarian = JSON.parse(localStorage.getItem('statusSantriHarian')) || {};
-    const dataAbsensiAsrama = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-    const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
-    
-    const sekarang = new Date();
-    const offset = sekarang.getTimezoneOffset();
-    const hariIni = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
-    const kamarAktifClean = kamarAktifSekarang.trim().toUpperCase().replace("KAMAR", "").trim();
-
-    let santriKamarIni = dataSantriMaster.filter(s => {
-        if(!s.kamar) return false;
-        return s.kamar.trim().toUpperCase().replace("KAMAR", "").trim() === kamarAktifClean;
-    });
-    
-    santriKamarIni.sort((a, b) => a.nama.localeCompare(b.nama));
-
-    if (santriKamarIni.length === 0) {
-        bodyModal.innerHTML = `<p style="text-align:center; color:#999; padding:20px; font-style:italic;">Belum ada santri terdaftar di kamar ini.</p>`;
-        return;
-    }
-
-    let htmlTabel = `
-        <table class="list-table">
-            <thead>
-                <tr>
-                    <th style="width: 40px; text-align: center;">No</th>
-                    <th>Nama Lengkap</th>
-                    <th style="width: 110px; text-align: center;">Status Presensi</th>
-                    <th style="width: 80px; text-align: center;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    santriKamarIni.forEach((santri, index) => {
-        const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-        const keyStatus = `${kamarAktifSekarang}_${namaSantriClean}`;
-        const hasilCekIzin = cekApakahSantriIzin(santri.nama, kamarAktifSekarang, tanggalTerpilih);
-
-        const adaDiDataLogAbsen = dataAbsensiAsrama.some(item => {
-            let tglItem = item.tanggal || "";
-            if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
-            const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
-            const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
-            return nLog === namaSantriClean && kLog === kamarAktifClean && tglItem === tanggalTerpilih;
-        });
-
-        let teksTombol = "✓ Hadir";
-        let kelasWarnaTombol = "btn-status-hadir";
-        let fungsiKlik = `onclick="toggleStatusSantriMurni('${santri.nama.replace(/'/g, "\\'")}', 'hadir')"`;
-        let trClass = "";
-        let infoIzin = "";
-
-        if (hasilCekIzin.status) {
-            trClass = "class='row-terblokir-izin'";
-            teksTombol = "📝 Izin Aktif";
-            kelasWarnaTombol = "btn-status-izin-aktif";
-            fungsiKlik = `onclick="peringatanIzinAktif('${santri.nama.replace(/'/g, "\\'")}', '${hasilCekIzin.keterangan.replace(/'/g, "\\'")}')"`;
-            infoIzin = `<small style="display:block; color:#b45309; font-size:11px; font-weight:600; margin-top: 2px;">⚠️ Hub Perizinan: "${hasilCekIzin.keterangan}"</small>`;
+        if (Array.isArray(statusIzinSantriAktif)) {
+            dataIzin = statusIzinSantriAktif.find(item => {
+                const itemNama = (item.nama || item.namaSantri || "").trim().toUpperCase();
+                const itemKamar = (item.kamar || item.kamarSantri || "").trim().toUpperCase().replace("KAMAR", "").trim();
+                return itemNama === namaClean && (itemKamar === kamarClean || itemKamar === `A${kamarClean}`);
+            });
         } else {
-            let statusSekarang = 'hadir';
-            if (tanggalTerpilih === hariIni) { statusSekarang = statusSantriHarian[keyStatus] || 'hadir'; } 
-            else { statusSekarang = adaDiDataLogAbsen ? 'absen' : 'hadir'; }
-
-            if (statusSekarang === 'absen') {
-                teksTombol = "🚫 Absen";
-                kelasWarnaTombol = "btn-status-absen";
-                fungsiKlik = `onclick="toggleStatusSantriMurni('${santri.nama.replace(/'/g, "\\'")}', 'absen')"`;
-            }
+            const keyIzin = `${kamarClean}_${namaClean}`;
+            dataIzin = statusIzinSantriAktif[keyIzin];
         }
 
-        htmlTabel += `
-            <tr ${trClass}>
-                <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
-                <td>
-                    <span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span>
-                </td>
-                <td style="text-align: center;">
-                    <button class="btn-toggle-status ${kelasWarnaTombol}" ${fungsiKlik}>${teksTombol}</button>
-                </td>
-                <td style="text-align: center;">
-                    <button class="btn-hapus-santri" onclick="hapusSantriMurni('${santri.nama.replace(/'/g, "\\'")}', '${santri.kamar}')">🗑️ Hapus</button>
-                </td>
-            </tr>
+        if (dataIzin) {
+            const tglMulai = dataIzin.tanggalMulai || dataIzin.tglMulai || dataIzin.tanggal || dataIzin.tgl_mulai || dataIzin.tgl_izin || null; 
+            const tglSelesai = dataIzin.tanggalSelesai || dataIzin.tglSelesai || dataIzin.tanggalKembali || dataIzin.tglKembali || dataIzin.tgl_selesai || dataIzin.tgl_kembali || null;
+
+            if (tglMulai && tglSelesai) {
+                const tAbsen = new Date(tanggalAbsenDipilih);
+                const tMulai = new Date(tglMulai);
+                const tSelesai = new Date(tglSelesai);
+                tAbsen.setHours(0,0,0,0); tMulai.setHours(0,0,0,0); tSelesai.setHours(0,0,0,0);
+
+                if (tAbsen < tMulai || tAbsen > tSelesai) { return { status: false, keterangan: "" }; }
+            }
+            return { 
+                status: true, 
+                keterangan: dataIzin.keterangan || dataIzin.alasan || "Sedang Keluar Izin Asrama"
+            };
+        }
+        return { status: false, keterangan: "" };
+    }
+
+    // === FUNGSI RESET PER KAMAR ===
+    function resetKamarAktif() {
+        if (!kamarAktifSekarang) return;
+        const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
+        const konfirmasi = confirm(`Apakah Anda yakin ingin mereset semua santri di KAMAR ${kamarAktifSekarang} pada tanggal ${tanggalTerpilih} kembali ke status "Hadir"?\n(Santri berstatus izin tidak akan diubah)`);
+        if (!konfirmasi) return;
+
+        const kamarAktifClean = kamarAktifSekarang.trim().toUpperCase().replace("KAMAR", "").trim();
+
+        const santriKamarIni = dataSantriMaster.filter(s => {
+            if(!s.kamar) return false;
+            return s.kamar.trim().toUpperCase().replace("KAMAR", "").trim() === kamarAktifClean;
+        });
+
+        santriKamarIni.forEach(santri => {
+            const cekIzin = cekApakahSantriIzin(santri.nama, kamarAktifSekarang, tanggalTerpilih);
+            if (cekIzin.status) return;
+
+            const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+            const keyStatus = `${kamarAktifSekarang}_${namaSantriClean}`;
+            statusSantriHarian[keyStatus] = 'hadir';
+
+            const targets = dataAbsensiAsrama.filter(item => {
+                let tglItem = item.tanggal || "";
+                if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+                const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                return nLog === namaSantriClean && kLog === kamarAktifClean && tglItem === tanggalTerpilih;
+            });
+
+            targets.forEach(t => {
+                if(t.idFirebase) db.ref(`dataAbsensiAsrama/${t.idFirebase}`).remove();
+            });
+        });
+        alert(`Berhasil mereset presensi Kamar ${kamarAktifSekarang}!`);
+    }
+
+    // === FUNGSI RESET SEMUA KAMAR SEKALIGUS ===
+    function resetSemuaKamarSekaligus() {
+        const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
+        const konfirmasi = confirm(`⚠️ PERINGATAN RE-ABSENSI TOTAL ⚠️\n\nApakah Anda yakin ingin mereset TOTAL seluruh santri di SEMUA KAMAR (A1 s/d A13) pada tanggal ${tanggalTerpilih} kembali ke status "Hadir"?\n\n(Santri berstatus izin aktif di izin1.html aman & tidak ikut direset)`);
+        if (!konfirmasi) return;
+
+        dataSantriMaster.forEach(santri => {
+            if (!santri.kamar) return;
+            const kClean = santri.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+            const namaKamarLengkap = `A${kClean.replace('A', '')}`; 
+
+            const cekIzin = cekApakahSantriIzin(santri.nama, namaKamarLengkap, tanggalTerpilih);
+            if (cekIzin.status) return;
+
+            const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+            const keyStatus = `${namaKamarLengkap}_${namaSantriClean}`;
+            statusSantriHarian[keyStatus] = 'hadir';
+
+            const targets = dataAbsensiAsrama.filter(item => {
+                let tglItem = item.tanggal || "";
+                if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+                const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                return nLog === namaSantriClean && kLog === kClean && tglItem === tanggalTerpilih;
+            });
+
+            targets.forEach(t => {
+                if(t.idFirebase) db.ref(`dataAbsensiAsrama/${t.idFirebase}`).remove();
+            });
+        });
+        alert(`Berhasil mereset seluruh kamar ke status Hadir di tanggal ${tanggalTerpilih}!`);
+    }
+
+    // === GENERATE TABEL SANTRI DI DALAM MODAL KAMAR ===
+    function segarkanIsiFormModal() {
+        if (!kamarAktifSekarang) return;
+
+        const bodyModal = document.getElementById('modalIsiSantri');
+        const tanggalTerpilih = localStorage.getItem('tanggalAbsenTerakhir');
+        
+        const sekarang = new Date();
+        const offset = sekarang.getTimezoneOffset();
+        const hariIni = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+        const kamarAktifClean = kamarAktifSekarang.trim().toUpperCase().replace("KAMAR", "").trim();
+
+        let santriKamarIni = dataSantriMaster.filter(s => {
+            if(!s.kamar) return false;
+            return s.kamar.trim().toUpperCase().replace("KAMAR", "").trim() === kamarAktifClean;
+        });
+        
+        santriKamarIni.sort((a, b) => a.nama.localeCompare(b.nama));
+
+        if (santriKamarIni.length === 0) {
+            bodyModal.innerHTML = `<p style="text-align:center; color:#999; padding:20px; font-style:italic;">Belum ada santri terdaftar di kamar ini.</p>`;
+            return;
+        }
+
+        let htmlTabel = `
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px; text-align: center;">No</th>
+                        <th>Nama Lengkap</th>
+                        <th style="width: 110px; text-align: center;">Status Presensi</th>
+                        <th style="width: 80px; text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
         `;
+
+        santriKamarIni.forEach((santri, index) => {
+            const namaSantriClean = santri.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+            const keyStatus = `${kamarAktifSekarang}_${namaSantriClean}`;
+            const hasilCekIzin = cekApakahSantriIzin(santri.nama, kamarAktifSekarang, tanggalTerpilih);
+
+            const adaDiDataLogAbsen = dataAbsensiAsrama.some(item => {
+                let tglItem = item.tanggal || "";
+                if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+                const nLog = item.nama.trim().toLowerCase().replace(/\s+/g, ' ');
+                const kLog = item.kamar.trim().toUpperCase().replace("KAMAR", "").trim();
+                return nLog === namaSantriClean && kLog === kamarAktifClean && tglItem === tanggalTerpilih;
+            });
+
+            let teksTombol = "✓ Hadir";
+            let kelasWarnaTombol = "btn-status-hadir";
+            let fungsiKlik = `onclick="toggleStatusSantriMurni('${santri.nama.replace(/'/g, "\\'")}', 'hadir')"`;
+            let trClass = "";
+            let infoIzin = "";
+
+            if (hasilCekIzin.status) {
+                trClass = "class='row-terblokir-izin'";
+                teksTombol = "📝 Izin Aktif";
+                kelasWarnaTombol = "btn-status-izin-aktif";
+                fungsiKlik = `onclick="peringatanIzinAktif('${santri.nama.replace(/'/g, "\\'")}', '${hasilCekIzin.keterangan.replace(/'/g, "\\'")}')"`;
+                infoIzin = `<small style="display:block; color:#b45309; font-size:11px; font-weight:600; margin-top: 2px;">⚠️ Hub Perizinan: "${hasilCekIzin.keterangan}"</small>`;
+            } else {
+                let statusSekarang = 'hadir';
+                if (tanggalTerpilih === hariIni) { statusSekarang = statusSantriHarian[keyStatus] || 'hadir'; } 
+                else { statusSekarang = adaDiDataLogAbsen ? 'absen' : 'hadir'; }
+
+                if (statusSekarang === 'absen') {
+                    teksTombol = "🚫 Absen";
+                    kelasWarnaTombol = "btn-status-absen";
+                    fungsiKlik = `onclick="toggleStatusSantriMurni('${santri.nama.replace(/'/g, "\\'")}', 'absen')"`;
+                }
+            }
+
+            htmlTabel += `
+                <tr ${trClass}>
+                    <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
+                    <td>
+                        <span style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${santri.nama}</span>
+                        ${infoIzin}
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-toggle-status ${kelasWarnaTombol}" ${fungsiKlik}>${teksTombol}</button>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-hapus-santri" onclick="hapusSantriMurni('${santri.idFirebase}', '${santri.nama.replace(/'/g, "\\'")}', '${santri.kamar}')">🗑️ Hapus</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        htmlTabel += `</tbody></table>`;
+        bodyModal.innerHTML = htmlTabel;
+    }
+
+    function toggleStatusSantriMurni(namaSantri, statusLama) {
+        toggleStatusSantriGlobal(namaSantri, kamarAktifSekarang, statusLama);
+    }
+    
+    function htmlEscape(str) {
+        return str.replace(/'/g, "\\'");
+    }
+
+    function hapusSantriMurni(idFirebase, namaSantri, kamarSantri) {
+        const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus santri bernama "${namaSantri.toUpperCase()}" dari Kamar ${kamarSantri}?`);
+        if (konfirmasi && idFirebase) {
+            db.ref(`dataSantriMaster/${idFirebase}`).remove().then(() => {
+                alert("Data santri telah dihapus.");
+            });
+        }
+    }
+
+    // === POPUP PERINGATAN REJECT ABSENSI ===
+    function peringatanIzinAktif(nama, alasan) {
+        alert(`TINDAKAN DITOLAK!\n\nSantri bernama "${nama.toUpperCase()}" tidak bisa diubah status presensinya melalui halaman ini karena status perizinannya sedang aktif (Sinkronisasi dari halaman Perizinan).\n\nKeterangan Izin: "${alasan}"`);
+    }
+
+    // === KONTROL TUTUP MODAL ===
+    function tutupFormSantri(e) { if (e.target.id === 'modalFormSantri') paksaTutupForm(); }
+    function paksaTutupForm() { document.getElementById('modalFormSantri').classList.remove('show'); kamarAktifSekarang = ""; }
+
+    // === NAVIGATOR ACTIVE CONTROLLER ===
+    const namaFileAktif = window.location.pathname.split('/').pop();
+    document.querySelectorAll('.sidebar ul li a').forEach(link => {
+        link.classList.remove('active');
+        const hrefTautan = link.getAttribute('href');
+        if (namaFileAktif === hrefTautan || hrefTautan === 'list.html') { link.classList.add('active'); }
     });
 
-    htmlTabel += `</tbody></table>`;
-    bodyModal.innerHTML = htmlTabel;
-}
-
-function toggleStatusSantriMurni(namaSantri, statusLama) {
-    toggleStatusSantriGlobal(namaSantri, kamarAktifSekarang, statusLama);
-    segarkanIsiFormModal();
-}
-function hapusSantriMurni(namaSantri, kamarSantri) {
-    const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus santri bernama "${namaSantri.toUpperCase()}" dari Kamar ${kamarSantri}?`);
-    if (konfirmasi) {
-        let dataSantriMaster = JSON.parse(localStorage.getItem('dataSantriMaster')) || [];
-        dataSantriMaster = dataSantriMaster.filter(s => !(s.nama.trim().toUpperCase() === namaSantri.trim().toUpperCase() && s.kamar === kamarSantri));
-        localStorage.setItem('dataSantriMaster', JSON.stringify(dataSantriMaster));
-        segarkanIsiFormModal();
-        renderGridKamar();
-    }
-}
-
-// === POPUP PERINGATAN REJECT ABSENSI ===
-function peringatanIzinAktif(nama, alasan) {
-    alert(`TINDAKAN DITOLAK!\n\nSantri bernama "${nama.toUpperCase()}" tidak bisa diubah status presensinya melalui halaman ini karena status perizinannya sedang aktif (Sinkronisasi dari halaman Perizinan).\n\nKeterangan Izin: "${alasan}"`);
-}
-
-// === KONTROL TUTUP MODAL ===
-function tutupFormSantri(e) { if (e.target.id === 'modalFormSantri') paksaTutupForm(); }
-function paksaTutupForm() { document.getElementById('modalFormSantri').classList.remove('show'); kamarAktifSekarang = ""; }
-
-// === NAVIGATOR ACTIVE CONTROLLER ===
-const namaFileAktif = window.location.pathname.split('/').pop();
-document.querySelectorAll('.sidebar ul li a').forEach(link => {
-    link.classList.remove('active');
-    const hrefTautan = link.getAttribute('href');
-    if (namaFileAktif === hrefTautan || hrefTautan === 'list.html') { link.classList.add('active'); }
-});
-
-// EKSEKUSI SAAT HALAMAN SELESAI DI-LOAD
-window.onload = function() {
-    inisialisasiTanggal(); 
-    renderGridKamar();     
-};
+    // EKSEKUSI SAAT HALAMAN SELESAI DI-LOAD
+    window.onload = function() {
+        inisialisasiTanggal(); 
+        listenFirebaseData();     
+    };
 </script>
 </body>
 </html>
