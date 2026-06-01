@@ -18,93 +18,41 @@
         .sidebar ul li a.active { background-color: #3b82f6; color: white; font-weight: bold; }
 
         /* ==================== AREA KONTEN UTAMA ==================== */
-        .main-content { margin-left: 250px; flex: 1; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
-        .container { max-width: 900px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
-        .container h2 { text-align: center; color: #ff0000; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
-        
-        .filter-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f0f2f5; }
-        .btn-filter { padding: 8px 16px; border: 1px solid #ff0000; background-color: #fff; color: #000000; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
-        .btn-filter.active, .btn-filter:hover { background-color: #fa0015; color: #fff; }
-        
-        /* ==================== PANEL KONTROL FILTER & SORTIR ==================== */
-        .table-header-control { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; padding: 15px; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .control-row-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .kamar-title { font-size: 18px; color: #1e293b; margin: 0; font-weight: bold; }
-        
-        .control-row-bottom { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; background-color: #ffffff; padding: 10px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
-        .filter-group { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #4b5563; }
-        .filter-input { padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #1e293b; font-family: inherit; font-weight: 600; outline: none; }
-        .filter-input:focus { border-color: #ff0000; }
-        .sort-select { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: white; font-size: 13px; color: #4b5563; font-weight: 600; cursor: pointer; }
+        .main-content { margin-left: 250px; flex: 1; padding: 40px; display: flex; justify-content: center; align-items: flex-start; }
+        .rekap-box { background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 1000px; }
+        .rekap-box h1 { text-align: center; color: #2c3e50; margin-bottom: 25px; font-size: 24px; }
 
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: 12px 15px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
-        th { background-color: #fef3c7; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 12px; }
+        /* PANEL ATAS & FILTER */
+        .panel-kontrol { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; flex-wrap: wrap; }
+        .wrapper-filter { display: flex; align-items: center; gap: 10px; }
+        .wrapper-filter label { font-weight: 600; color: #475569; font-size: 14px; }
+        .input-tanggal { padding: 8px 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; font-weight: bold; color: #1e293b; }
+        .input-tanggal:focus { border-color: #3b82f6; }
         
-        .row-master { cursor: pointer; transition: background-color 0.2s; }
-        .row-master:hover { background-color: #f1f5f9; }
-        .counter-badge { background-color: #ff0000; color: white; border-radius: 12px; padding: 2px 8px; font-size: 12px; font-weight: bold; }
-        
-        .btn-edit-nama { background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 10px; font-weight: 600; }
-        .btn-edit-nama:hover { background-color: #e5e7eb; color: #1f2937; }
+        .btn-hapus-semua { background-color: #dc2626; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .btn-hapus-semua:hover { background-color: #b91c1c; }
 
-        .arrow-icon { font-weight: bold; transition: transform 0.2s; color: #64748b; margin-left: 10px; display: inline-block; }
-        .active .arrow-icon { transform: rotate(180deg); }
+        /* STYLE TABEL */
+        .rekap-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .rekap-table th, .rekap-table td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .rekap-table th { background-color: #f8fafc; color: #475569; font-weight: 600; font-size: 14px; }
+        .rekap-table tr:hover { background-color: #f8fafc; }
 
-        .btn-hapus-tunggal { background-color: #fee2e2; color: #ef4444; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 11px; transition: all 0.2s; }
-        .btn-hapus-tunggal:hover { background-color: #ef4444; color: white; }
+        /* BADGE STATUS */
+        .badge-status { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block; text-transform: uppercase; }
+        .badge-absen { background-color: #fee2e2; color: #dc2626; }
+        .badge-izin { background-color: #fef3c7; color: #d97706; }
 
+        .btn-aksi-hapus { background-color: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .btn-aksi-hapus:hover { background-color: #ffe4e6; color: #be123c; }
+
+        /* DROPDOWN KETERANGAN */
+        .btn-dropdown { background: none; border: none; color: #64748b; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 600; }
+        .btn-dropdown:hover { color: #1e293b; }
+        .btn-dropdown .panah { transition: transform 0.2s; display: inline-block; }
+        .btn-dropdown.active .panah { transform: rotate(180deg); }
         .row-detail { display: none; background-color: #f8fafc; }
-        .row-detail td { padding: 15px 25px; border-bottom: 1px solid #e2e8f0; }
-        .tanggal-list { list-style: none; padding: 0; margin: 0; }
-        .tanggal-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #cbd5e1; }
-        .tanggal-item:last-child { border-bottom: none; }
-
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
-        .badge-hadir { background-color: #d1fae5; color: #065f46; }
-        .badge-absen { background-color: #fee2e2; color: #991b1b; }
-
-        .btn-aksi-container { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; }
-        .btn-kembali { color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 14px; }
-        .btn-hapus { background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; }
-
-        /* ==================== STYLE DIALOG MODAL FORM BARU ==================== */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center; font-family: 'Segoe UI', Arial, sans-serif; opacity: 0; transition: opacity 0.3s ease; }
-        .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-box { background-color: #ffffff; width: 100%; max-width: 420px; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: scale(0.8); transition: transform 0.3s ease; }
-        .modal-overlay.show .modal-box { transform: scale(1); }
-        .modal-box h3 { color: #ff0000; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #fee2e2; padding-bottom: 10px; }
-        .modal-group { margin-bottom: 18px; }
-        .modal-group label { display: block; font-size: 13px; font-weight: 600; color: #4b5563; margin-bottom: 6px; }
-        .modal-group input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; text-transform: uppercase; }
-        .modal-group input:focus { border-color: #ff0000; box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.15); }
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
-        .btn-modal-cancel { padding: 8px 16px; background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
-        .btn-modal-cancel:hover { background-color: #e2e8f0; }
-        .btn-modal-submit { padding: 8px 16px; background-color: #ff0000; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
-        .btn-modal-submit:hover { background-color: #fa0015; }
-
-        /* Wadah untuk Logo */
-        .logo-container {
-            text-align: center;
-        }
-
-        /* Mengatur ukuran logo gambar */
-        .logo-container img {
-            max-width: 200px; /* Atur lebar maksimal logo di sini */
-            height: auto;     /* Menjaga proporsi logo agar tidak gepeng */
-            display: block;
-        }
-
-        /* Teks pengganti jika belum ada gambar */
-        .logo-placeholder {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #333333; /* Warna teks abu-abu gelap/hitam */
-            letter-spacing: 2px;
-        }
+        .box-detail { padding: 15px; border-left: 4px solid #cbd5e1; color: #475569; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -118,298 +66,172 @@
                 <li><a href="izin1.html">Perizinan</a></li>
                 <li><a href="izin2.html">Rekap Sakit</a></li>
                 <li><a href="daftar.html">Alpha</a></li>
-                <li><a href="rekap.html">Rekap Kamar</a></li> 
+                <li><a href="rekap.html">Rekap Kamar</a></li>
                 <li><a href="history.html">Riwayat</a></li>
             </ul>
         </nav>
 
         <main class="main-content">
-            <div class="container">
-                <h2>Laporan Rekap Absensi (Alpha)</h2>
-                <p class="subtitle">Daftar Ketidak Hadiran Santri (Per Kamar)</p>
-
-                <div class="filter-container" id="filterContainer">
-                    <button class="btn-filter active" onclick="pilihFilter('Semua', this)">Semua Kamar</button>
-                </div>
-
-                <div class="table-header-control">
-                    <div class="control-row-top">
-                        <h3 class="kamar-title" id="currentKamarView">Semua Kamar</h3>
-                        <div>
-                            <label for="sortir" style="font-size: 13px; font-weight: 600; color: #666; margin-right: 5px;">Urutkan:</label>
-                            <select id="sortir" class="sort-select" onchange="tampilkanData()">
-                                <option value="terbaru">Terbaru Masuk</option>
-                                <option value="absen_banyak">Absen Terbanyak</option>
-                                <option value="abjad">Nama (A - Z)</option>
-                            </select>
-                        </div>
+            <div class="rekap-box">
+                <h1>📋 Daftar Rekap Absensi</h1>
+                
+                <div class="panel-kontrol">
+                    <div class="wrapper-filter">
+                        <label for="filterTanggal">📅 Filter Tanggal:</label>
+                        <input type="date" id="filterTanggal" class="input-tanggal" onchange="tampilkanData()">
                     </div>
-                    
-                    <div class="control-row-bottom">
-                        <div class="filter-group">
-                            <label for="filterTanggalMulai">📅 Dari:</label>
-                            <input type="date" id="filterTanggalMulai" class="filter-input" onchange="tampilkanData()">
-                        </div>
-                        <div class="filter-group">
-                            <label for="filterTanggalSelesai">Sampai:</label>
-                            <input type="date" id="filterTanggalSelesai" class="filter-input" onchange="tampilkanData()">
-                        </div>
-                        <button class="btn-edit-nama" style="margin: 0; padding: 6px 12px;" onclick="resetFilterTanggal()">🔄 Reset Tanggal</button>
+                    <button class="btn-hapus-semua" onclick="hapusSemuaData()">🗑️ Hapus Semua Data</button>
+                </div>
+
+                <div id="containerTabelRekap">
                     </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Kamar</th>
-                                <th>Nama Lengkap</th>
-                                <th>Total Absen</th>
-                                <th style="text-align: right;">Detail Riwayat</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelBody"></tbody>
-                    </table>
-                </div>
-
-                <div class="btn-aksi-container">
-                    <a href="list.html" class="btn-kembali">← Kembali ke Daftar Kamar</a>
-                    <button onclick="hapusSemuaData()" class="btn-hapus">Kosongkan Semua Data</button>
-                </div>
             </div>
         </main>
     </div>
 
-    <div class="modal-overlay" id="modalUbahNama">
-        <div class="modal-box">
-            <h3>📝 Form Ubah Nama Santri</h3>
-            <div class="modal-group">
-                <label>Kamar Asrama</label>
-                <input type="text" id="modalKamar" disabled style="background-color: #f1f5f9; color: #64748b; font-weight: bold;">
-            </div>
-            <div class="modal-group">
-                <label for="modalNamaInput">Nama Lengkap Baru</label>
-                <input type="text" id="modalNamaInput" placeholder="Masukkan nama baru..." autocomplete="off">
-            </div>
-            <div class="modal-buttons">
-                <button class="btn-modal-cancel" onclick="tutupFormModal()">Batal</button>
-                <button class="btn-modal-submit" onclick="eksekusiSimpanNama()">Simpan Perubahan</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="logo-container">
-    <img src="besma.jpg" alt="Logo Besma">
-</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    let filterSekarang = 'Semua';
-    let namaLamaDipilih = "";
-    let kamarDipilih = "";
+    // Taruh konfigurasi Firebase Realtime Database Anda di sini
+    const firebaseConfig = {
+        apiKey: "AIzaSyBxA...",
+        authDomain: "absensi-besma.firebaseapp.com",
+        databaseURL: "https://absensi-besma-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "absensi-besma",
+        storageBucket: "absensi-besma.appspot.com",
+        messagingSenderId: "1234567890",
+        appId: "1:12345678:web:abcd1234"
+    };
+    
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    const filterContainer = document.getElementById('filterContainer');
-    for (let i = 1; i <= 13; i++) {
-        const namaKamar = `A${i}`;
-        const btn = document.createElement('button');
-        btn.className = 'btn-filter'; btn.textContent = namaKamar;
-        btn.onclick = function() { pilihFilter(namaKamar, btn); };
-        filterContainer.appendChild(btn);
-    }
+    // Penampung data lokal yang otomatis ter-sinkronisasi dengan awan
+    let dataAbsensiGlobal = [];
 
-    function pilihFilter(kamar, elemenTombol) {
-        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-        elemenTombol.classList.add('active');
-        filterSekarang = kamar;
+    // Mengambil data secara Real-time dari Firebase Node 'dataAbsensiAsrama'
+    db.ref('dataAbsensiAsrama').on('value', (snapshot) => {
+        dataAbsensiGlobal = snapshot.val() || [];
+        tampilkanData(); // Render ulang otomatis setiap ada perubahan data di cloud
+    });
+
+    // Jalankan set tanggal default saat pertama kali dimuat
+    window.onload = function() {
+        const inputTanggal = document.getElementById('filterTanggal');
+        const sekarang = new Date();
+        const offset = sekarang.getTimezoneOffset();
+        const hariIni = new Date(sekarang.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+        inputTanggal.value = hariIni;
         tampilkanData();
-    }
-
-    // Fungsi Baru untuk Mengosongkan Filter Tanggal
-    function resetFilterTanggal() {
-        document.getElementById('filterTanggalMulai').value = '';
-        document.getElementById('filterTanggalSelesai').value = '';
-        tampilkanData();
-    }
+    };
 
     function tampilkanData() {
-        const tabelBody = document.getElementById('tabelBody');
-        const currentKamarView = document.getElementById('currentKamarView');
-        const tipeSortir = document.getElementById('sortir').value;
+        const filterTanggal = document.getElementById('filterTanggal').value;
+        const container = document.getElementById('containerTabelRekap');
         
-        // Mengambil value filter tanggal baru
-        const tanggalMulai = document.getElementById('filterTanggalMulai').value;
-        const tanggalSelesai = document.getElementById('filterTanggalSelesai').value;
-        
-        currentKamarView.textContent = ` ${filterSekarang === 'Semua' ? 'Semua Kamar' : 'Kamar ' + filterSekarang}`;
-        tabelBody.innerHTML = '';
-
-        const dataAbsensi = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-        
-        // Logika Filter Kamar sekaligus Filter Tanggal
-        const dataDifilter = dataAbsensi.filter(item => {
-            // 1. Filter Kamar
-            const cocokKamar = (filterSekarang === 'Semua' || item.kamar === filterSekarang);
-            
-            // 2. Filter Rentang atau Tanggal Tunggal
-            let cocokTanggal = true;
-            if (item.tanggal) {
-                // Konversi tanggal log agar formatnya aman dibandingkan (YYYY-MM-DD)
-                const tglItemStr = item.tanggal.includes('T') ? item.tanggal.split('T')[0] : item.tanggal;
-                
-                if (tanggalMulai && !tanggalSelesai) {
-                    // Jika hanya mengisi tanggal 'Dari' saja (mencari tanggal spesifik tersebut)
-                    cocokTanggal = (tglItemStr === tanggalMulai);
-                } else if (tanggalMulai && tanggalSelesai) {
-                    // Jika mengisi rentang tanggal 'Dari' sampai 'Sampai'
-                    cocokTanggal = (tglItemStr >= tanggalMulai && tglItemStr <= tanggalSelesai);
-                } else if (!tanggalMulai && tanggalSelesai) {
-                    // Jika hanya mengisi tanggal 'Sampai' saja
-                    cocokTanggal = (tglItemStr <= tanggalSelesai);
-                }
-            }
-            
-            return cocokKamar && cocokTanggal;
+        // Filter array berdasarkan tanggal pilihan
+        const dataTerfilter = dataAbsensiGlobal.filter(item => {
+            let tglItem = item.tanggal || "";
+            if (tglItem.includes('T')) tglItem = tglItem.split('T')[0];
+            return tglItem === filterTanggal;
         });
 
-        if (dataDifilter.length === 0) {
-            tabelBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:20px;">Belum ada data absensi untuk kriteria filter ini.</td></tr>`;
+        if (dataTerfilter.length === 0) {
+            container.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:40px; font-style:italic; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">Tidak ada rekap data absensi pada tanggal ini.</p>`;
             return;
         }
 
-        const dataTerkompresi = {};
-        dataDifilter.forEach(item => {
-            const key = `${item.nama}_${item.kamar}`;
-            if (!dataTerkompresi[key]) {
-                dataTerkompresi[key] = { nama: item.nama, kamar: item.kamar, total: 0, waktuTerakhir: new Date(item.tanggal), riwayat: [] };
-            }
-            dataTerkompresi[key].total += 1;
-            dataTerkompresi[key].riwayat.push({ tanggal: item.tanggal, status: item.status });
-            if (new Date(item.tanggal) > dataTerkompresi[key].waktuTerakhir) dataTerkompresi[key].waktuTerakhir = new Date(item.tanggal);
-        });
+        let htmlTabel = `
+            <table class="rekap-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">No</th>
+                        <th>Nama Kamar</th>
+                        <th>Nama Lengkap</th>
+                        <th style="text-align: center;">Status</th>
+                        <th>Keterangan Tambahan</th>
+                        <th style="width: 100px; text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
 
-        const arrayUser = Object.values(dataTerkompresi);
-        
-        // Logika Pengurutan / Sortir
-        if (tipeSortir === 'abjad') { 
-            arrayUser.sort((a, b) => a.nama.localeCompare(b.nama)); 
-        } else if (tipeSortir === 'absen_banyak') {
-            arrayUser.sort((a, b) => b.total - a.total); 
-        } else { 
-            arrayUser.sort((a, b) => b.waktuTerakhir - a.waktuTerakhir); 
-        }
+        dataTerfilter.forEach((item, index) => {
+            const idDropdown = `detail_${index}`;
+            const badgeClass = item.status === 'Absen' ? 'badge-absen' : 'badge-izin';
+            const teksKeterangan = item.keterangan ? item.keterangan : 'Tidak ada catatan tambahan.';
 
-        let indexId = 0;
-        arrayUser.forEach(user => {
-            indexId++;
-            user.riwayat.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-
-            const trMaster = document.createElement('tr');
-            trMaster.className = 'row-master';
-            trMaster.setAttribute('onclick', `if(event.target.tagName !== 'BUTTON') toggleDropdown('detail_${indexId}', this)`);
-            trMaster.innerHTML = `
-                <td><span style="font-weight:600; color:#ff0000;">${user.kamar}</span></td>
-                <td>
-                    <strong>${user.nama}</strong>
-                    <button class="btn-edit-nama" onclick="bukaFormModal('${user.nama}', '${user.kamar}')">✏️</button>
-                </td>
-                <td><span class="counter-badge">${user.total} Kali</span></td>
-                <td style="text-align: right;"><span class="arrow-icon">▼</span></td>
-            `;
-
-            const trDetail = document.createElement('tr');
-            trDetail.id = `detail_${indexId}`; trDetail.className = 'row-detail';
-            
-            let htmlListTanggal = '<ul class="tanggal-list">';
-            user.riwayat.forEach(r => {
-                const tanggalFormat = new Date(r.tanggal).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
-                let badgeClass = 'badge-absen';
-                
-                htmlListTanggal += `
-                    <li class="tanggal-item">
-                        <span>📅 ${tanggalFormat}</span>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span class="badge ${badgeClass}">${r.status}</span>
-                            <button class="btn-hapus-tunggal" onclick="hapusSatuAbsen('${user.nama}', '${user.kamar}', '${r.tanggal}', '${r.status}')">Hapus</button>
+            htmlTabel += `
+                <tr>
+                    <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
+                    <td style="font-weight: 600; color: #334155;">KAMAR ${item.kamar}</td>
+                    <td style="text-transform: uppercase; font-weight: 600; color: #1e293b;">${item.nama}</td>
+                    <td style="text-align: center;"><span class="badge-status ${badgeClass}">${item.status}</span></td>
+                    <td>
+                        <button class="btn-dropdown" onclick="toggleDropdown('${idDropdown}', this)">
+                            📄 Lihat Catatan <span class="panah">▼</span>
+                        </button>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-aksi-hapus" onclick="hapusSatuData('${item.nama.replace(/'/g, "\\'")}', '${item.kamar}', '${item.tanggal}', '${item.status}')">
+                            🗑️ Hapus
+                        </button>
+                    </td>
+                </tr>
+                <tr id="${idDropdown}" class="row-detail">
+                    <td colspan="6">
+                        <div class="box-detail">
+                            <strong>Detail Log Informasi:</strong><br>
+                            ${teksKeterangan}
                         </div>
-                    </li>`;
-            });
-            htmlListTanggal += '</ul>';
-            trDetail.innerHTML = `<td colspan="4">${htmlListTanggal}</td>`;
-
-            tabelBody.appendChild(trMaster);
-            tabelBody.appendChild(trDetail);
+                    </td>
+                </tr>
+            `;
         });
+
+        htmlTabel += `</tbody></table>`;
+        container.innerHTML = htmlTabel;
     }
 
-    function bukaFormModal(namaLama, kamar) {
-        namaLamaDipilih = namaLama; kamarDipilih = kamar;
-        document.getElementById('modalKamar').value = "KAMAR " + kamar;
-        document.getElementById('modalNamaInput').value = namaLama;
-        document.getElementById('modalUbahNama').classList.add('show');
-        setTimeout(() => { document.getElementById('modalNamaInput').focus(); }, 100);
-    }
-
-    function tutupFormModal() { document.getElementById('modalUbahNama').classList.remove('show'); namaLamaDipilih = ""; kamarDipilih = ""; }
-
-    function eksekusiSimpanNama() {
-        let namaBaru = document.getElementById('modalNamaInput').value;
-        if (!namaBaru) { alert("Gagal: Nama baru tidak boleh kosong!"); return; }
-        namaBaru = namaBaru.trim().toUpperCase();
-
-        if (namaBaru === namaLamaDipilih.toUpperCase()) { tutupFormModal(); return; }
-
-        let dataAbsensi = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-        const apakahNamaSudahAda = dataAbsensi.some(item => item.nama.toUpperCase() === namaBaru && item.kamar === kamarDipilih);
-
-        if (apakahNamaSudahAda) {
-            if (confirm(`Nama "${namaBaru}" terdeteksi sudah memiliki rekap di Kamar ${kamarDipilih}.\n\nGabungkan riwayat?`)) {
-                dataAbsensi = dataAbsensi.map(item => {
-                    if (item.nama.toLowerCase() === namaLamaDipilih.toLowerCase() && item.kamar === kamarDipilih) { item.nama = namaBaru; }
-                    return item;
-                });
-            } else { return; }
-        } else {
-            dataAbsensi = dataAbsensi.map(item => {
-                if (item.nama.toLowerCase() === namaLamaDipilih.toLowerCase() && item.kamar === kamarDipilih) { item.nama = namaBaru; }
-                return item;
+    function hapusSatuData(nama, kamar, tanggal, status) {
+        if (confirm(`Apakah Anda yakin ingin menghapus data rekap ${status} untuk ${nama}?`)) {
+            // Cari dan buang item terpilih dari array lokal
+            const dataTerupdate = dataAbsensiGlobal.filter(item => {
+                return !(item.nama === nama && item.kamar === kamar && item.tanggal === tanggal && item.status === status);
             });
-        }
 
-        localStorage.setItem('dataAbsensiAsrama', JSON.stringify(dataAbsensi));
-        tutupFormModal();
-        tampilkanData();
-    }
-
-    document.getElementById('modalNamaInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') eksekusiSimpanNama(); });
-
-    function hapusSatuAbsen(nama, kamar, tanggal, status) {
-        if (confirm(`Hapus data rekap ${status} untuk ${nama}?`)) {
-            let dataAbsensi = JSON.parse(localStorage.getItem('dataAbsensiAsrama')) || [];
-            const indexTarget = dataAbsensi.findIndex(item => item.nama === nama && item.kamar === kamar && item.tanggal === tanggal && item.status === status);
-
-            if (indexTarget !== -1) {
-                dataAbsensi.splice(indexTarget, 1);
-                localStorage.setItem('dataAbsensiAsrama', JSON.stringify(dataAbsensi));
-                tampilkanData();
-            }
+            // Kirim balik array terbaru ke Firebase Cloud
+            db.ref('dataAbsensiAsrama').set(dataTerupdate);
         }
     }
 
     function toggleDropdown(id, element) {
         const detailRow = document.getElementById(id);
-        if (detailRow.style.display === "table-row") { detailRow.style.display = "none"; element.classList.remove("active"); } 
-        else { detailRow.style.display = "table-row"; element.classList.add("active"); }
+        if (detailRow.style.display === "table-row") { 
+            detailRow.style.display = "none"; 
+            element.classList.remove("active"); 
+        } else { 
+            detailRow.style.display = "table-row"; 
+            element.classList.add("active"); 
+        }
     }
 
     function hapusSemuaData() {
-        if(confirm("Apakah Anda yakin ingin menghapus seluruh data absensi?")) { localStorage.removeItem('dataAbsensiAsrama'); tampilkanData(); }
+        if(confirm("Apakah Anda yakin ingin menghapus seluruh data absensi?")) { 
+            db.ref('dataAbsensiAsrama').remove(); 
+        }
     }
-    tampilkanData();
 
+    // Penanganan highlight menu sidebar aktif
     document.querySelectorAll('.sidebar ul li a').forEach(link => link.classList.remove('active'));
     const namaFileAktif = window.location.pathname.split('/').pop();
     document.querySelectorAll('.sidebar ul li a').forEach(link => {
         const hrefTautan = link.getAttribute('href');
-        if (namaFileAktif === hrefTautan) { link.classList.add('active'); }
+        if (namaFileAktif === hrefTautan || (namaFileAktif === '' && hrefTautan === 'index.html')) {
+            link.classList.add('active');
+        }
     });
 </script>
 </body>
